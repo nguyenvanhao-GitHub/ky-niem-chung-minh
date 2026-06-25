@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kỷ Niệm Của Chúng Mình</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Thiết lập cơ bản cho mọi thiết bị */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Tông màu Đỏ Lãng Mạn (Romantic Wine Red) */
+        :root {
+            --bg-color: #590d22; /* Đỏ mận/Rượu vang sẫm */
+            --bg-gradient: linear-gradient(135deg, #38040e 0%, #590d22 50%, #800f2f 100%);
+            --text-color: #fff0f3; /* Trắng hồng nhạt, dịu mắt trên nền tối */
+            --accent-color: #ff8fa3; /* Hồng rạng rỡ để làm điểm nhấn */
+            --highlight-color: #ff4d6d; /* Đỏ tươi cho trái tim */
+            --glass-bg: rgba(255, 255, 255, 0.08); /* Kính mờ tối màu */
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            overflow-x: hidden;
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        /* Màn hình chào mừng */
+        #welcome-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-gradient);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 2s ease-in-out;
+        }
+
+        #welcome-screen h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: var(--accent-color);
+            margin-bottom: 40px;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(255, 143, 163, 0.4);
+            opacity: 0;
+            animation: fadeInSlow 3s forwards 0.5s, heartbeat 2s infinite 3.5s;
+        }
+
+        #start-btn {
+            padding: 12px 45px;
+            font-size: 1.2rem;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 600;
+            color: var(--text-color);
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--accent-color);
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            opacity: 0;
+            animation: fadeInSlow 3s forwards 1.5s;
+            backdrop-filter: blur(5px);
+        }
+
+        #start-btn:hover {
+            background: var(--accent-color);
+            color: #590d22;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 143, 163, 0.5);
+        }
+
+        /* Nội dung chính */
+        #main-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 2.5s ease-in;
+        }
+
+        header {
+            padding: 60px 20px 30px;
+        }
+
+        h1.title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(3rem, 6vw + 1rem, 5rem);
+            margin-bottom: 10px;
+            color: var(--text-color);
+            font-weight: 700;
+            text-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        p.subtitle {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            font-weight: 300;
+            color: #ffb3c6;
+            letter-spacing: 0.5px;
+            padding: 0 15px;
+        }
+
+        /* Hộp đếm ngày tinh tế */
+        .counter-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            padding: 25px 15px;
+            margin: 30px auto;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+        
+        .counter-box p {
+            margin: 0 0 15px 0;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 400;
+            font-size: 1.2rem;
+            color: var(--text-color);
+        }
+
+        .time-blocks {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px 25px;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #ffb3c6;
+        }
+
+        .time-blocks span {
+            display: block;
+            color: var(--accent-color);
+            font-size: 2.5rem;
+            margin-bottom: 2px;
+            font-weight: 700;
+            font-family: 'Dancing Script', cursive;
+            text-shadow: 0 0 10px rgba(255, 143, 163, 0.3);
+        }
+
+        /* Trình phát nhạc */
+        .music-player {
+            margin: 10px auto 30px;
+            background: var(--glass-bg);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid var(--glass-border);
+            display: inline-block;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+        .music-player:hover { 
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(255, 143, 163, 0.2);
+        }
+        audio {
+            max-width: 250px;
+            height: 35px;
+            outline: none;
+        }
+
+        /* =========================================
+           BỐ CỤC ẢNH CHUẨN RESPONSIVE CHO MỌI THIẾT BỊ
+           ========================================= */
+        
+        /* Cấu trúc khung Polaroid nổi bật trên nền đỏ */
+        .polaroid {
+            background: #fff;
+            padding: 10px;
+            padding-bottom: 40px; 
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); /* Bóng đổ đậm hơn để nổi trên nền tối */
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .polaroid img, .polaroid video {
+            width: 100%;
+            height: auto; 
+            object-fit: cover;
+            border-radius: 2px;
+            display: block;
+        }
+
+        /* Phần Hero (Ảnh Video to phía trên) */
+        .hero-section {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            width: 90%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        @media (min-width: 768px) {
+            .hero-section {
+                grid-template-columns: 1fr 1fr; 
+            }
+        }
+
+        .hero-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            z-index: 10;
+        }
+
+        /* Phần Gallery (Nhiều ảnh nhỏ) */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px;
+            width: 92%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 0 80px;
+        }
+
+        @media (min-width: 600px) {
+            .gallery { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        }
+
+        @media (min-width: 900px) {
+            .gallery { grid-template-columns: repeat(4, 1fr); gap: 25px; }
+        }
+
+        .gallery .polaroid {
+            cursor: pointer;
+            filter: brightness(90%); /* Hơi tối lại xíu để khi hover nổi bật lên */
+        }
+
+        /* Độ nghiêng cực nhẹ xen kẽ */
+        .gallery .polaroid:nth-child(even) { transform: rotate(1.5deg); }
+        .gallery .polaroid:nth-child(odd) { transform: rotate(-1.5deg); }
+
+        .gallery .polaroid:hover {
+            transform: scale(1.05) rotate(0deg) translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+            filter: brightness(100%);
+            z-index: 10;
+        }
+
+        /* =========================================
+           MODAL (PHÓNG TO ẢNH CHUẨN RESPONSIVE)
+           ========================================= */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(40, 5, 15, 0.95); /* Nền mờ màu đỏ đen */
+            backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .modal-content-wrapper {
+            position: relative;
+            background: white;
+            padding: 12px 12px 50px 12px;
+            border-radius: 4px;
+            box-shadow: 0 10px 50px rgba(255, 143, 163, 0.2);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 100%;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal img {
+            max-width: 100%;
+            max-height: calc(95vh - 70px);
+            object-fit: contain;
+        }
+
+        @media (min-width: 768px) {
+            .modal-content-wrapper {
+                max-width: 80vw;
+                max-height: 90vh;
+                padding: 15px 15px 60px 15px;
+            }
+            .modal img { max-height: calc(90vh - 80px); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: 300;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.3s;
+            line-height: 1;
+            z-index: 10000;
+        }
+
+        @media (min-width: 768px) {
+            .close-btn {
+                top: 20px; right: -50px; /* Đẩy nút X ra ngoài viền ảnh trên PC */
+                font-size: 45px;
+            }
+        }
+
+        .close-btn:hover { color: var(--accent-color); transform: scale(1.1) rotate(90deg); }
+
+        footer {
+            padding: 30px;
+            font-size: 1.2rem;
+            font-weight: 400;
+            color: #ffb3c6;
+            font-family: 'Dancing Script', cursive;
+            letter-spacing: 1px;
+        }
+
+        /* Animations */
+        @keyframes fadeInSlow {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Tim rơi lung linh */
+        .falling-heart {
+            position: fixed;
+            top: -5vh;
+            color: var(--highlight-color); /* Đỏ tươi */
+            opacity: 0.5; 
+            animation: fall linear infinite;
+            z-index: -1;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255, 77, 109, 0.5);
+        }
+
+        @keyframes fall {
+            to { transform: translateY(105vh) rotate(360deg); }
+        }
+
+        /* Tim click chuột mãnh liệt */
+        .click-heart {
+            position: fixed;
+            color: var(--highlight-color);
+            font-size: 24px;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            text-shadow: 0 0 15px rgba(255, 77, 109, 0.8);
+        }
+
+        @keyframes floatUp {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; }
+            50% { transform: translate(-50%, -80px) scale(1.5); opacity: 1; }
+            100% { transform: translate(-50%, -120px) scale(1.8); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <h1>Gửi tình yêu của anh... ❤️</h1>
+        <button id="start-btn" onclick="startExperience()">Chạm để mở</button>
+    </div>
+
+    <div id="main-content">
+        <header>
+            <h1 class="title">Chúng mình</h1>
+            <p class="subtitle">Tình yêu đẹp nhất là khi có em ở đây...</p>
+            
+            <div class="counter-box">
+                <p>Mình đã quen nhau được</p>
+                <div class="time-blocks">
+                    <div><span id="days">0</span> Ngày</div>
+                    <div><span id="hours">0</span> Giờ</div>
+                    <div><span id="minutes">0</span> Phút</div>
+                    <div><span id="seconds">0</span> Giây</div>
+                </div>
+            </div>
+
+            <div class="music-player">
+                <p style="margin: 0 0 5px 0; font-size: 13px; font-weight: 600; color: #ffb3c6; letter-spacing: 1px;">♪ Từng Ngày Yêu Em</p>
+                <audio id="bg-music" controls loop>
+                    <source src="nhac-cua-chung-minh.mp3" type="audio/mpeg">
+                </audio>
+            </div>
+        </header>
+
+        <section class="hero-section">
+            <div class="polaroid hero-item">
+                <video id="couple-video" controls muted loop playsinline>
+                    <source src="PNT00120260624135008.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="polaroid hero-item">
+                <img src="PNT00120260624135008.png" alt="Photo Booth Collage">
+            </div>
+        </section>
+
+        <section class="gallery">
+            <div class="polaroid" onclick="openModal('PNT00120260624135008_01.jpg')">
+                <img src="PNT00120260624135008_01.jpg" alt="Kỷ niệm 1" loading="lazy">
+            </div>
+            <div class="polaroid" onclick="openModal('PNT00120260624135008_02.jpg')">
+                <img src="PNT00120260624135008_02.jpg" alt="Kỷ niệm 2" loading="lazy">
+            </div>
+            <div class="polaroid" onclick="openModal('PNT00120260624135008_03.jpg')">
+                <img src="PNT00120260624135008_03.jpg" alt="Kỷ niệm 3" loading="lazy">
+            </div>
+            <div class="polaroid" onclick="openModal('PNT00120260624135008_04.jpg')">
+                <img src="PNT00120260624135008_04.jpg" alt="Kỷ niệm 4" loading="lazy">
+            </div>
+            <div class="polaroid" onclick="openModal('PNT00120260624135008_05.jpg')">
+                <img src="PNT00120260624135008_05.jpg" alt="Kỷ niệm 5" loading="lazy">
+            </div>
+            <div class="polaroid" onclick="openModal('PNT00120260624135008_06.jpg')">
+                <img src="PNT00120260624135008_06.jpg" alt="Kỷ niệm 6" loading="lazy">
+            </div>
+            <div class="polaroid" onclick="openModal('PNT00120260624135008_07.jpg')">
+                <img src="PNT00120260624135008_07.jpg" alt="Kỷ niệm 7" loading="lazy">
+            </div>
+            <div class="polaroid" onclick="openModal('PNT00120260624135008_08.jpg')">
+                <img src="PNT00120260624135008_08.jpg" alt="Kỷ niệm 8" loading="lazy">
+            </div>
+        </section>
+
+        <div id="imageModal" class="modal">
+            <div class="modal-content-wrapper">
+                <span class="close-btn" onclick="closeModal()">&times;</span>
+                <img id="modalImg" src="">
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2026 Dành trọn cho em 💖
+        </footer>
+    </div>
+
+    <script>
+        /* --- 1. CHUYỂN CẢNH MƯỢT MÀ --- */
+        function startExperience() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            welcomeScreen.style.opacity = '0';
+            
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+                const mainContent = document.getElementById('main-content');
+                mainContent.style.display = 'block';
+                
+                setTimeout(() => {
+                    mainContent.style.opacity = '1';
+                    const music = document.getElementById('bg-music');
+                    music.volume = 0.5; 
+                    music.play().catch(error => console.log("Trình duyệt chặn autoplay audio"));
+                    
+                    const video = document.getElementById('couple-video');
+                    video.play().catch(error => console.log("Trình duyệt chặn autoplay video"));
+                }, 100);
+            }, 2000); 
+        }
+
+        /* --- 2. BỘ ĐẾM NGÀY YÊU --- */
+        const startDate = new Date("2026-06-09T00:00:00").getTime(); 
+
+        function updateCounter() {
+            const now = new Date().getTime();
+            const distance = now - startDate;
+
+            if (distance < 0) {
+                document.getElementById("days").innerText = "0";
+                document.getElementById("hours").innerText = "00";
+                document.getElementById("minutes").innerText = "00";
+                document.getElementById("seconds").innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days;
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+        }
+        setInterval(updateCounter, 1000);
+        updateCounter();
+
+        /* --- 3. HIỆU ỨNG TIM RƠI TRÊN NỀN ĐỎ --- */
+        function createFallingHearts() {
+            const heartsContainer = document.body;
+            const symbols = ['❤️', '✨', '💖', '★']; 
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.classList.add('falling-heart');
+                heart.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.fontSize = (Math.random() * 12 + 10) + 'px';
+                heart.style.animationDuration = (Math.random() * 8 + 10) + 's';
+                
+                heartsContainer.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 20000);
+            }, 600); 
+        }
+        createFallingHearts();
+
+        /* --- 4. HIỆU ỨNG CLICK CHUỘT (TỎA SÁNG) --- */
+        document.addEventListener('click', function(e) {
+            if(document.getElementById('welcome-screen').style.display !== 'none') return;
+            if (e.target.classList.contains('close-btn') || e.target.classList.contains('modal')) return;
+
+            const clickHeart = document.createElement('div');
+            clickHeart.classList.add('click-heart');
+            clickHeart.innerHTML = '❤️';
+            clickHeart.style.left = e.pageX + 'px';
+            clickHeart.style.top = e.pageY + 'px';
+            document.body.appendChild(clickHeart);
+
+            setTimeout(() => {
+                clickHeart.remove();
+            }, 1000);
+        });
+
+        /* --- 5. ĐÓNG MỞ ẢNH LỚN --- */
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImg");
+
+        function openModal(src) {
+            modal.style.display = "flex";
+            modalImg.src = src;
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            modalImg.src = ""; 
+        }
+
+        modal.onclick = function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
