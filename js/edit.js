@@ -1,5 +1,5 @@
 /* ================================================
-   EDIT.JS — Edit mode toggle + full CRUD + Sync/Backup
+   EDIT.JS — Edit mode toggle + full CRUD + Firebase Upload
    ================================================
    Depends on: utils.js, data.js, render.js, effects.js
    ================================================ */
@@ -32,7 +32,7 @@ function toggleEditMode() {
 }
 
 /* ================================================
-   PHOTO CRUD
+   PHOTO CRUD WITH HYBRID CLOUD & LOCAL STORAGE
    ================================================ */
 function handleFileSelect(files) {
     var progress = document.getElementById('upload-progress');
@@ -44,7 +44,7 @@ function handleFileSelect(files) {
     if (!total) return;
 
     progress.classList.add('show');
-    label.textContent = 'Đang nén ' + total + ' ảnh...';
+    label.textContent = 'Đang xử lý ' + total + ' ảnh...';
     bar.style.width   = '0%';
 
     var done = 0;
@@ -55,7 +55,7 @@ function handleFileSelect(files) {
             done++;
             bar.style.width = Math.round((done / total) * 100) + '%';
             if (done === total) {
-                label.textContent = 'Nén xong ' + total + ' ảnh!';
+                label.textContent = 'Đã chuẩn bị ' + total + ' ảnh!';
                 setTimeout(function () { progress.classList.remove('show'); }, 800);
             }
             renderPreviewGrid();
@@ -90,25 +90,51 @@ function removePending(idx) {
 function confirmAddPhotos() {
     if (pendingPhotos.length === 0) { showToast('Chưa chọn ảnh nào!', 'error'); return; }
 
+    var progress = document.getElementById('upload-progress');
+    var bar      = document.getElementById('progress-bar');
+    var label    = document.getElementById('progress-label');
+    progress.classList.add('show');
+    label.textContent = 'Đang tải ảnh lên...';
+    bar.style.width   = '10%';
+
+    var count = 0;
+    var total = pendingPhotos.length;
+
     var promises = pendingPhotos.map(function (p) {
         var id = genId();
-        return storePhotoBlob(id, p.blob).then(function () {
-            objectURLMap[id] = URL.createObjectURL(p.blob);
-            appMeta.photos.push({
-                id:           id,
-                albumCaption: p.caption || 'Kỷ niệm của chúng mình 💕',
-                isDefault:    false
+        /* Try uploading to Cloud Storage if active */
+        return uploadPhotoToCloud(id, p.blob).then(function (cloudUrl) {
+            return storePhotoBlob(id, p.blob).then(function () {
+                if (cloudUrl) {
+                    appMeta.photos.push({
+                        id:           id,
+                        cloudUrl:     cloudUrl,
+                        albumCaption: p.caption || 'Kỷ niệm của chúng mình 💕',
+                        isDefault:    false
+                    });
+                } else {
+                    objectURLMap[id] = URL.createObjectURL(p.blob);
+                    appMeta.photos.push({
+                        id:           id,
+                        albumCaption: p.caption || 'Kỷ niệm của chúng mình 💕',
+                        isDefault:    false
+                    });
+                }
+                count++;
+                bar.style.width = Math.round((count / total) * 90) + '%';
+                URL.revokeObjectURL(p.previewURL);
             });
-            URL.revokeObjectURL(p.previewURL);
         });
     });
 
     Promise.all(promises).then(function () {
+        bar.style.width = '100%';
         if (saveMetadata()) {
             showToast('✅ Đã thêm ' + pendingPhotos.length + ' ảnh!', 'success');
             pendingPhotos = [];
             document.getElementById('preview-grid').innerHTML = '';
             document.getElementById('file-input').value = '';
+            setTimeout(function () { progress.classList.remove('show'); }, 600);
             closeAdminModal('modal-add-photo');
             renderGallery();
             renderAlbum();
@@ -116,6 +142,7 @@ function confirmAddPhotos() {
     }).catch(function (err) {
         showToast('⚠️ Lỗi khi lưu ảnh: ' + err.message, 'error');
         console.error(err);
+        progress.classList.remove('show');
     });
 }
 
