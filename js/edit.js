@@ -1,5 +1,5 @@
 /* ================================================
-   EDIT.JS — Edit mode toggle + full CRUD
+   EDIT.JS — Edit mode toggle + full CRUD + Sync/Backup
    ================================================
    Depends on: utils.js, data.js, render.js, effects.js
    ================================================ */
@@ -28,7 +28,6 @@ function toggleEditMode() {
         showToast('✅ Đã lưu tất cả thay đổi', 'success');
     }
 
-    /* Re-render gallery to show/hide add-card and controls */
     renderGallery();
 }
 
@@ -127,11 +126,9 @@ function deletePhoto(id) {
     appMeta.photos.splice(idx, 1);
     saveMetadata();
 
-    /* Clean up blob & URL asynchronously */
     deletePhotoBlob(id).catch(function (e) { console.warn('deletePhotoBlob error', e); });
     revokeURL(id);
 
-    /* Adjust album page */
     if (currentAlbumPage >= appMeta.photos.length) {
         currentAlbumPage = Math.max(0, appMeta.photos.length - 1);
     }
@@ -162,7 +159,6 @@ function saveCaption() {
         showToast('✅ Đã lưu caption', 'success');
         closeAdminModal('modal-edit-caption');
         renderAlbum();
-        /* Update gallery label too */
         renderGallery();
     }
 }
@@ -267,7 +263,6 @@ function saveLetter() {
 function confirmDelete(msg, onConfirm) {
     document.getElementById('confirm-msg').textContent = msg;
     var btn = document.getElementById('confirm-yes-btn');
-    /* Remove previous listener */
     var newBtn = btn.cloneNode(true);
     btn.parentNode.replaceChild(newBtn, btn);
     newBtn.addEventListener('click', function () {
@@ -287,7 +282,6 @@ function openAdminModal(id) {
 function closeAdminModal(id) {
     document.getElementById(id).classList.remove('show');
     if (id === 'modal-add-photo') {
-        /* Clean up pending previews */
         pendingPhotos.forEach(function (p) { URL.revokeObjectURL(p.previewURL); });
         pendingPhotos = [];
         document.getElementById('preview-grid').innerHTML = '';
@@ -298,17 +292,15 @@ function closeAdminModal(id) {
 }
 
 /* ================================================
-   INIT EVENT LISTENERS (called once from app.js)
+   INIT EVENT LISTENERS
    ================================================ */
 function initEditListeners() {
-    /* Close admin modals on overlay click */
     document.querySelectorAll('.admin-modal-overlay').forEach(function (overlay) {
         overlay.addEventListener('click', function (e) {
             if (e.target === overlay) closeAdminModal(overlay.id);
         });
     });
 
-    /* Drag & drop on upload zone */
     var dropZone = document.getElementById('drop-zone');
     dropZone.addEventListener('dragover',  function (e) { e.preventDefault(); dropZone.classList.add('drag-over'); });
     dropZone.addEventListener('dragleave', function ()  { dropZone.classList.remove('drag-over'); });
@@ -318,17 +310,14 @@ function initEditListeners() {
         handleFileSelect(e.dataTransfer.files);
     });
 
-    /* Icon picker */
     document.getElementById('icon-picker').addEventListener('click', function (e) {
         var opt = e.target.closest('.icon-opt');
         if (opt) selectIcon(opt.dataset.icon);
     });
 
-    /* Keyboard shortcut: Ctrl+E → toggle edit mode */
     document.addEventListener('keydown', function (e) {
         if (e.ctrlKey && e.key === 'e') { e.preventDefault(); toggleEditMode(); }
 
-        /* Lightbox navigation */
         var modal = document.getElementById('imageModal');
         if (modal && modal.style.display === 'flex') {
             if (e.key === 'Escape')      closeModal();

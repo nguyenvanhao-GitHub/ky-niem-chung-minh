@@ -131,6 +131,11 @@
     <footer class="footer">
         <span class="footer-heart">💖</span>
         <div class="footer-text">Dành trọn cho em — Tình yêu của đời anh</div>
+        <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px;">
+            <button class="btn-secondary" style="width: auto; padding: 6px 16px; font-size: 0.8rem;" onclick="exportDataJSON()">📦 Xuất sao lưu (.json)</button>
+            <button class="btn-secondary" style="width: auto; padding: 6px 16px; font-size: 0.8rem;" onclick="document.getElementById('import-file-input').click()">📥 Nhập sao lưu</button>
+            <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importDataJSON(this.files[0])">
+        </div>
         <div class="footer-year">© 2026 Kỷ Niệm Của Chúng Mình</div>
     </footer>
 </div>
@@ -178,7 +183,7 @@
             <div class="drop-zone-text">
                 <strong>Kéo &amp; thả ảnh vào đây</strong><br>
                 hoặc click để chọn ảnh từ máy<br>
-                <small style="opacity:0.6;">(Nhiều ảnh, tự động nén, lưu vào IndexedDB)</small>
+                <small style="opacity:0.6;">(Nhiều ảnh, tự động nén, đồng bộ Cloud)</small>
             </div>
         </div>
 
@@ -292,7 +297,13 @@
 <!-- ============ TOAST ============ -->
 <div class="toast-container" id="toast-container"></div>
 
-<!-- ============ SCRIPTS (dependency order) ============ -->
+<!-- ============ FIREBASE SDK ============ -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+<!-- ============ APPLICATION SCRIPTS ============ -->
 <script src="js/utils.js"></script>
 <script src="js/data.js"></script>
 <script src="js/effects.js"></script>

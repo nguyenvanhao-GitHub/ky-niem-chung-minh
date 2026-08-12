@@ -1,16 +1,16 @@
 /* ================================================
-   DATA.JS — Data layer: IndexedDB (blobs) + localStorage (metadata)
+   DATA.JS — Hybrid Data Layer: Cloud Sync + IndexedDB + localStorage + Export/Import
    ================================================
-   Depends on: utils.js
+   Depends on: utils.js, firebase-config.js
    ================================================ */
 
 /* ---------- State ---------- */
 var appMeta      = null;   // { photos, timeline, letter, startDate }
-var objectURLMap = {};     // id → objectURL  (for uploaded photos)
+var objectURLMap = {};     // id → objectURL (for uploaded photos)
 var _db          = null;   // cached IDB connection
 
 /* ================================================
-   INDEXEDDB — stores photo blobs
+   INDEXEDDB — Local photo blob storage
    ================================================ */
 function openDB() {
     if (_db) return Promise.resolve(_db);
@@ -30,7 +30,7 @@ function openDB() {
 function storePhotoBlob(id, blob) {
     return openDB().then(function (db) {
         return new Promise(function (resolve, reject) {
-            var tx  = db.transaction(PHOTO_STORE, 'readwrite');
+            var tx = db.transaction(PHOTO_STORE, 'readwrite');
             tx.objectStore(PHOTO_STORE).put({ id: id, blob: blob });
             tx.oncomplete = resolve;
             tx.onerror    = function (e) { reject(e.target.error); };
@@ -65,6 +65,9 @@ function deletePhotoBlob(id) {
    ================================================ */
 function getPhotoSrc(photo) {
     if (photo.isDefault) return photo.src;
+    /* If direct cloud URL exists */
+    if (photo.cloudUrl) return photo.cloudUrl;
+    /* Else use local object URL */
     return objectURLMap[photo.id] || '';
 }
 
@@ -75,9 +78,8 @@ function revokeURL(id) {
     }
 }
 
-/* Preload all object URLs for uploaded photos */
 function loadAllImageURLs() {
-    var nonDefaults = appMeta.photos.filter(function (p) { return !p.isDefault; });
+    var nonDefaults = appMeta.photos.filter(function (p) { return !p.isDefault && !p.cloudUrl; });
     var promises = nonDefaults.map(function (p) {
         return getPhotoBlob(p.id).then(function (blob) {
             if (blob) {
@@ -92,7 +94,7 @@ function loadAllImageURLs() {
 }
 
 /* ================================================
-   LOCALSTORAGE — stores text metadata
+   LOCALSTORAGE METADATA
    ================================================ */
 function loadMetadata() {
     try {
@@ -117,6 +119,12 @@ function loadMetadata() {
 function saveMetadata() {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appMeta));
+        /* Push to Cloud if active */
+        if (isFirebaseActive && dbFirestore) {
+            dbFirestore.collection('album').doc('metadata').set(appMeta).catch(function(e){
+                console.warn('Cloud sync save failed:', e);
+            });
+        }
         return true;
     } catch (e) {
         showToast('⚠️ Lưu thất bại — bộ nhớ đầy!', 'error');
@@ -125,7 +133,87 @@ function saveMetadata() {
 }
 
 /* ================================================
-   MIGRATION — from old localStorage base64 format
+   EXPORT / IMPORT BACKUP (Sync file solution)
+   ================================================ */
+function exportDataJSON() {
+    /* Gather all photos, timeline, letter */
+    var exportObj = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        meta: appMeta,
+        blobs: {}
+    };
+
+    var nonDefaults = appMeta.photos.filter(function (p) { return !p.isDefault; });
+    var promises = nonDefaults.map(function (p) {
+        return getPhotoBlob(p.id).then(function (blob) {
+            if (blob) {
+                return new Promise(function (res) {
+                    var r = new FileReader();
+                    r.onload = function (e) {
+                        exportObj.blobs[p.id] = e.target.result;
+                        res();
+                    };
+                    r.readAsDataURL(blob);
+                });
+            }
+        });
+    });
+
+    Promise.all(promises).then(function () {
+        var str = JSON.stringify(exportObj);
+        var blob = new Blob([str], { type: 'application/json' });
+        var url  = URL.createObjectURL(blob);
+        var a    = document.createElement('a');
+        a.href   = url;
+        a.download = 'ky-niem-tinh-yeu-backup.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('📦 Đã xuất file sao lưu thành công!', 'success');
+    }).catch(function (err) {
+        showToast('⚠️ Lỗi khi xuất dữ liệu: ' + err.message, 'error');
+    });
+}
+
+function importDataJSON(file) {
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function (e) {
+        try {
+            var data = JSON.parse(e.target.result);
+            if (!data.meta || !data.meta.photos) {
+                showToast('⚠️ File dữ liệu không hợp lệ!', 'error');
+                return;
+            }
+
+            appMeta = data.meta;
+            saveMetadata();
+
+            /* Restore blobs if present */
+            var blobKeys = Object.keys(data.blobs || {});
+            var restorePromises = blobKeys.map(function (id) {
+                return fetch(data.blobs[id])
+                    .then(function (r) { return r.blob(); })
+                    .then(function (b) { return storePhotoBlob(id, b); });
+            });
+
+            Promise.all(restorePromises).then(function () {
+                return loadAllImageURLs();
+            }).then(function () {
+                renderAll();
+                showToast('🎉 Đã nhập dữ liệu đồng bộ thành công!', 'success');
+            });
+        } catch (err) {
+            showToast('⚠️ Lỗi khi đọc file backup: ' + err.message, 'error');
+        }
+    };
+    reader.readAsText(file);
+}
+
+/* ================================================
+   MIGRATION FROM OLD BASE64 FORMAT
    ================================================ */
 function migrateOldData() {
     var oldRaw = localStorage.getItem(OLD_STORAGE_KEY);
@@ -147,7 +235,6 @@ function migrateOldData() {
     });
 
     return Promise.all(promises).then(function () {
-        /* Save migrated metadata under new key */
         var migrated = {
             photos:    parsed.photos    || deepClone(DEFAULT_PHOTOS),
             timeline:  parsed.timeline  || deepClone(DEFAULT_TIMELINE),
@@ -165,11 +252,25 @@ function migrateOldData() {
    INIT
    ================================================ */
 function initData() {
-    /* 1. Migrate old data if present */
-    return migrateOldData().then(function () {
-        /* 2. Load metadata */
+    return initFirebaseCloud().then(function (cloudActive) {
+        return migrateOldData();
+    }).then(function () {
         appMeta = loadMetadata();
-        /* 3. Build object URLs for uploaded photos */
         return loadAllImageURLs();
+    }).then(function () {
+        /* Listen for realtime cloud updates if connected */
+        if (isFirebaseActive && dbFirestore) {
+            dbFirestore.collection('album').doc('metadata')
+                .onSnapshot(function (doc) {
+                    if (doc.exists) {
+                        var cloudData = doc.data();
+                        if (cloudData && cloudData.photos) {
+                            appMeta = cloudData;
+                            localStorage.setItem(STORAGE_KEY, JSON.stringify(appMeta));
+                            loadAllImageURLs().then(function () { renderAll(); });
+                        }
+                    }
+                });
+        }
     });
 }
