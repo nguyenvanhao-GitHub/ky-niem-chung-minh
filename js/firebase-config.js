@@ -1,18 +1,18 @@
 /* ================================================
    FIREBASE-CONFIG.JS — Firebase Cloud Synchronization
    ================================================
-   Configured to connect your love album to Firebase Cloud!
-   Allows real-time photo & timeline sync across all devices.
+   Connected to project: ky-niem-chung-minh
+   Allows real-time photo & timeline sync across all devices!
    ================================================ */
 
 var FIREBASE_CONFIG = {
-    /* Temporary / Demo Firebase Config or paste your Firebase Project credentials here */
-    apiKey: "AIzaSyDemoKeyForLoveAlbumSync2026",
+    apiKey: "AIzaSyCbe4a-F7Lz_vAJmERrJxSPyIEXq4CUjkE",
     authDomain: "ky-niem-chung-minh.firebaseapp.com",
     projectId: "ky-niem-chung-minh",
-    storageBucket: "ky-niem-chung-minh.appspot.com",
-    messagingSenderId: "1234567890",
-    appId: "1:1234567890:web:abcdef123456"
+    storageBucket: "ky-niem-chung-minh.firebasestorage.app",
+    messagingSenderId: "1082453541897",
+    appId: "1:1082453541897:web:b024907c8a6b7f253e64d8",
+    measurementId: "G-3BDKZ4N5VG"
 };
 
 var firebaseApp = null;
@@ -38,10 +38,10 @@ function initFirebaseCloud() {
             dbFirestore = firebase.firestore();
             storageRef  = firebase.storage().ref();
             isFirebaseActive = true;
-            console.info('[Firebase] Connected successfully!');
+            console.info('[Firebase] Connected successfully to ky-niem-chung-minh!');
             resolve(true);
         } catch (err) {
-            console.warn('[Firebase] Config placeholder active. Local mode enabled.', err.message);
+            console.warn('[Firebase] Initialization error:', err.message);
             isFirebaseActive = false;
             resolve(false);
         }
