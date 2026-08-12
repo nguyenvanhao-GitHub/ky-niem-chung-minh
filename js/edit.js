@@ -1,12 +1,12 @@
 /* ================================================
-   EDIT.JS — Edit mode toggle + full CRUD + Firebase Upload
+   EDIT.JS — Edit mode toggle + full CRUD + Firestore Direct Sync
    ================================================
    Depends on: utils.js, data.js, render.js, effects.js
    ================================================ */
 
 /* ---------- State ---------- */
 var editMode        = false;
-var pendingPhotos   = [];   // [{ blob, previewURL, caption }]
+var pendingPhotos   = [];   // [{ blob, dataUrl, previewURL, caption }]
 var selectedIcon    = '💖';
 var _editCaptionId  = null;
 
@@ -32,7 +32,7 @@ function toggleEditMode() {
 }
 
 /* ================================================
-   PHOTO CRUD WITH HYBRID CLOUD & LOCAL STORAGE
+   PHOTO CRUD WITH FIRESTORE DIRECT CLOUD SYNC
    ================================================ */
 function handleFileSelect(files) {
     var progress = document.getElementById('upload-progress');
@@ -44,21 +44,26 @@ function handleFileSelect(files) {
     if (!total) return;
 
     progress.classList.add('show');
-    label.textContent = 'Đang xử lý ' + total + ' ảnh...';
+    label.textContent = 'Đang tối ưu ' + total + ' ảnh...';
     bar.style.width   = '0%';
 
     var done = 0;
     arr.forEach(function (file) {
-        compressToBlob(file).then(function (blob) {
+        /* Compress to max 1000px width for fast cloud sync */
+        compressToBlob(file, 1000, 0.78).then(function (blob) {
             var url = URL.createObjectURL(blob);
-            pendingPhotos.push({ blob: blob, previewURL: url, caption: '' });
-            done++;
-            bar.style.width = Math.round((done / total) * 100) + '%';
-            if (done === total) {
-                label.textContent = 'Đã chuẩn bị ' + total + ' ảnh!';
-                setTimeout(function () { progress.classList.remove('show'); }, 800);
-            }
-            renderPreviewGrid();
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                pendingPhotos.push({ blob: blob, dataUrl: e.target.result, previewURL: url, caption: '' });
+                done++;
+                bar.style.width = Math.round((done / total) * 100) + '%';
+                if (done === total) {
+                    label.textContent = 'Đã chuẩn bị xong ' + total + ' ảnh!';
+                    setTimeout(function () { progress.classList.remove('show'); }, 800);
+                }
+                renderPreviewGrid();
+            };
+            reader.readAsDataURL(blob);
         });
     });
 }
@@ -94,25 +99,18 @@ function confirmAddPhotos() {
     var bar      = document.getElementById('progress-bar');
     var label    = document.getElementById('progress-label');
     progress.classList.add('show');
-    label.textContent = 'Đang tải ảnh lên...';
-    bar.style.width   = '10%';
+    label.textContent = 'Đang đồng bộ ảnh lên Cloud...';
+    bar.style.width   = '20%';
 
     var count = 0;
     var total = pendingPhotos.length;
 
     var promises = pendingPhotos.map(function (p) {
         var id = genId();
-        /* Try uploading to Cloud Storage if active */
-        return uploadPhotoToCloud(id, p.blob).then(function (cloudUrl) {
+        /* Save to Firestore Cloud DB directly (FREE - No credit card required) */
+        return savePhotoToFirestore(id, p.dataUrl, p.caption).then(function (cloudSaved) {
             return storePhotoBlob(id, p.blob).then(function () {
-                if (cloudUrl) {
-                    appMeta.photos.push({
-                        id:           id,
-                        cloudUrl:     cloudUrl,
-                        albumCaption: p.caption || 'Kỷ niệm của chúng mình 💕',
-                        isDefault:    false
-                    });
-                } else {
+                if (!cloudSaved) {
                     objectURLMap[id] = URL.createObjectURL(p.blob);
                     appMeta.photos.push({
                         id:           id,
@@ -129,16 +127,15 @@ function confirmAddPhotos() {
 
     Promise.all(promises).then(function () {
         bar.style.width = '100%';
-        if (saveMetadata()) {
-            showToast('✅ Đã thêm ' + pendingPhotos.length + ' ảnh!', 'success');
-            pendingPhotos = [];
-            document.getElementById('preview-grid').innerHTML = '';
-            document.getElementById('file-input').value = '';
-            setTimeout(function () { progress.classList.remove('show'); }, 600);
-            closeAdminModal('modal-add-photo');
-            renderGallery();
-            renderAlbum();
-        }
+        saveMetadata();
+        showToast('✅ Đã thêm và đồng bộ ' + pendingPhotos.length + ' ảnh!', 'success');
+        pendingPhotos = [];
+        document.getElementById('preview-grid').innerHTML = '';
+        document.getElementById('file-input').value = '';
+        setTimeout(function () { progress.classList.remove('show'); }, 600);
+        closeAdminModal('modal-add-photo');
+        renderGallery();
+        renderAlbum();
     }).catch(function (err) {
         showToast('⚠️ Lỗi khi lưu ảnh: ' + err.message, 'error');
         console.error(err);
@@ -153,6 +150,7 @@ function deletePhoto(id) {
     appMeta.photos.splice(idx, 1);
     saveMetadata();
 
+    deletePhotoFromFirestore(id);
     deletePhotoBlob(id).catch(function (e) { console.warn('deletePhotoBlob error', e); });
     revokeURL(id);
 
@@ -183,6 +181,13 @@ function saveCaption() {
     photo.albumCaption = text;
 
     if (saveMetadata()) {
+        /* Update photo in Firestore if it's a cloud photo */
+        if (isFirebaseActive && dbFirestore) {
+            dbFirestore.collection('album_photos').doc(_editCaptionId).update({
+                albumCaption: text
+            }).catch(function(e){ console.warn('Update cloud caption error', e); });
+        }
+
         showToast('✅ Đã lưu caption', 'success');
         closeAdminModal('modal-edit-caption');
         renderAlbum();

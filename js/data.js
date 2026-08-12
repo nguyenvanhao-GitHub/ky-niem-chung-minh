@@ -1,5 +1,5 @@
 /* ================================================
-   DATA.JS — Hybrid Data Layer: Cloud Sync (Firebase) + IndexedDB + localStorage
+   DATA.JS — Cloud Sync via Firestore Database (100% FREE - NO CREDIT CARD NEEDED)
    ================================================
    Depends on: utils.js, firebase-config.js
    ================================================ */
@@ -61,13 +61,12 @@ function deletePhotoBlob(id) {
 }
 
 /* ================================================
-   OBJECT / CLOUD URL RESOLVER
+   PHOTO URL RESOLVER
    ================================================ */
 function getPhotoSrc(photo) {
     if (photo.isDefault) return photo.src;
-    /* If cloud URL exists, use it directly (accessible on any device) */
-    if (photo.cloudUrl) return photo.cloudUrl;
-    /* Fallback to local object URL */
+    if (photo.cloudUrl)  return photo.cloudUrl;
+    if (photo.dataUrl)   return photo.dataUrl;
     return objectURLMap[photo.id] || '';
 }
 
@@ -79,7 +78,9 @@ function revokeURL(id) {
 }
 
 function loadAllImageURLs() {
-    var nonDefaults = appMeta.photos.filter(function (p) { return !p.isDefault && !p.cloudUrl; });
+    var nonDefaults = appMeta.photos.filter(function (p) {
+        return !p.isDefault && !p.cloudUrl && !p.dataUrl;
+    });
     var promises = nonDefaults.map(function (p) {
         return getPhotoBlob(p.id).then(function (blob) {
             if (blob) {
@@ -94,7 +95,7 @@ function loadAllImageURLs() {
 }
 
 /* ================================================
-   LOCALSTORAGE & CLOUD SAVE
+   METADATA & FIRESTORE CLOUD SAVE
    ================================================ */
 function loadMetadata() {
     try {
@@ -118,18 +119,18 @@ function loadMetadata() {
 
 function saveMetadata() {
     try {
-        /* Local save */
         localStorage.setItem(STORAGE_KEY, JSON.stringify(appMeta));
 
-        /* Sync to Firebase Firestore if connected */
+        /* Sync timeline & letter to Firestore */
         if (isFirebaseActive && dbFirestore) {
-            dbFirestore.collection('album').doc('metadata').set(appMeta)
-                .then(function() {
-                    console.info('[Firebase] Synced metadata to cloud successfully.');
-                })
-                .catch(function(e) {
-                    console.warn('[Firebase] Sync failed:', e);
-                });
+            dbFirestore.collection('album').doc('metadata').set({
+                timeline:  appMeta.timeline,
+                letter:    appMeta.letter,
+                startDate: appMeta.startDate,
+                updatedAt: new Date().toISOString()
+            }).catch(function(e) {
+                console.warn('[Firestore] Sync metadata failed:', e);
+            });
         }
         return true;
     } catch (e) {
@@ -138,17 +139,30 @@ function saveMetadata() {
     }
 }
 
-/* ================================================
-   FIREBASE CLOUD PHOTO UPLOAD
-   ================================================ */
-function uploadPhotoToCloud(id, blob) {
-    if (!isFirebaseActive || !storageRef) {
-        return Promise.resolve(null);
+/* Save a photo to Firestore (No Firebase Storage needed!) */
+function savePhotoToFirestore(id, base64Data, caption) {
+    if (!isFirebaseActive || !dbFirestore) {
+        return Promise.resolve(false);
     }
-    var ref = storageRef.child('photos/' + id + '.jpg');
-    return ref.put(blob).then(function (snapshot) {
-        return snapshot.ref.getDownloadURL();
-    });
+    var photoDoc = {
+        id: id,
+        dataUrl: base64Data,
+        albumCaption: caption || 'Kỷ niệm của chúng mình 💕',
+        isDefault: false,
+        createdAt: new Date().toISOString()
+    };
+    return dbFirestore.collection('album_photos').doc(id).set(photoDoc)
+        .then(function() { return true; })
+        .catch(function(e) {
+            console.warn('[Firestore] Save photo error:', e);
+            return false;
+        });
+}
+
+function deletePhotoFromFirestore(id) {
+    if (!isFirebaseActive || !dbFirestore) return Promise.resolve();
+    return dbFirestore.collection('album_photos').doc(id).delete()
+        .catch(function(e) { console.warn('Delete cloud photo error', e); });
 }
 
 /* ================================================
@@ -162,7 +176,7 @@ function exportDataJSON() {
         blobs: {}
     };
 
-    var nonDefaults = appMeta.photos.filter(function (p) { return !p.isDefault && !p.cloudUrl; });
+    var nonDefaults = appMeta.photos.filter(function (p) { return !p.isDefault && !p.dataUrl; });
     var promises = nonDefaults.map(function (p) {
         return getPhotoBlob(p.id).then(function (blob) {
             if (blob) {
@@ -230,7 +244,7 @@ function importDataJSON(file) {
 }
 
 /* ================================================
-   MIGRATION FROM OLD BASE64 FORMAT
+   MIGRATION FROM OLD STORAGE
    ================================================ */
 function migrateOldData() {
     var oldRaw = localStorage.getItem(OLD_STORAGE_KEY);
@@ -260,13 +274,12 @@ function migrateOldData() {
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
         localStorage.removeItem(OLD_STORAGE_KEY);
-        console.info('[Album] Migrated from old storage format.');
         return true;
     });
 }
 
 /* ================================================
-   INIT DATA & REALTIME CLOUD LISTENER
+   INIT DATA & REALTIME FIRESTORE LISTENERS
    ================================================ */
 function initData() {
     return initFirebaseCloud().then(function () {
@@ -275,23 +288,40 @@ function initData() {
         appMeta = loadMetadata();
         return loadAllImageURLs();
     }).then(function () {
-        /* Real-time synchronization via Firebase Firestore */
         if (isFirebaseActive && dbFirestore) {
+            /* 1. Realtime listener for Timeline & Letter */
             dbFirestore.collection('album').doc('metadata')
                 .onSnapshot(function (doc) {
                     if (doc.exists) {
                         var cloudData = doc.data();
-                        if (cloudData && cloudData.photos) {
-                            appMeta = cloudData;
-                            localStorage.setItem(STORAGE_KEY, JSON.stringify(appMeta));
-                            loadAllImageURLs().then(function () {
-                                renderAll();
-                                console.info('[Firebase] Realtime update synced from cloud.');
-                            });
-                        }
+                        if (cloudData.timeline) appMeta.timeline = cloudData.timeline;
+                        if (cloudData.letter)   appMeta.letter   = cloudData.letter;
+                        renderTimeline();
+                        renderLetter();
                     }
                 }, function (err) {
-                    console.warn('[Firebase] Realtime listener error:', err.message);
+                    console.warn('[Firestore] Metadata listener error:', err.message);
+                });
+
+            /* 2. Realtime listener for Cloud Photos (No Storage upgrade needed!) */
+            dbFirestore.collection('album_photos')
+                .onSnapshot(function (snapshot) {
+                    var cloudPhotos = [];
+                    snapshot.forEach(function (doc) {
+                        cloudPhotos.push(doc.data());
+                    });
+
+                    if (cloudPhotos.length > 0) {
+                        /* Merge default photos + cloud photos */
+                        var defaults = DEFAULT_PHOTOS;
+                        appMeta.photos = defaults.concat(cloudPhotos);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(appMeta));
+                        renderAlbum();
+                        renderGallery();
+                        console.info('[Firestore] Synced ' + cloudPhotos.length + ' photos real-time!');
+                    }
+                }, function (err) {
+                    console.warn('[Firestore] Photos listener error:', err.message);
                 });
         }
     });
