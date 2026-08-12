@@ -6,869 +6,19 @@
     <title>Kỷ Niệm Của Chúng Mình 💕</title>
     <meta name="description" content="Album kỷ niệm tình yêu - Lưu giữ những khoảnh khắc đẹp nhất của chúng mình">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Dancing+Script:wght@400;600;700&family=Quicksand:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <style>
-        /* ============================================
-           DESIGN SYSTEM
-           ============================================ */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        :root {
-            --bg-deep: #1a0a14;
-            --bg-primary: #2d1124;
-            --bg-secondary: #3d1a33;
-            --bg-gradient: linear-gradient(160deg, #1a0a14 0%, #2d1124 30%, #3d1a33 60%, #4a1942 100%);
-            --text-primary: #fff5f7;
-            --text-secondary: #e8c4d0;
-            --text-muted: #b8899a;
-            --accent-rose: #ff6b8a;
-            --accent-pink: #ff8fa3;
-            --accent-gold: #f0c27f;
-            --accent-warm: #e8907a;
-            --accent-glow: rgba(255, 107, 138, 0.4);
-            --glass-bg: rgba(255, 255, 255, 0.06);
-            --glass-bg-strong: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --glass-border-glow: rgba(255, 107, 138, 0.25);
-            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.3);
-            --shadow-glow: 0 0 40px rgba(255, 107, 138, 0.15);
-            --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.5);
-            --radius-sm: 8px;
-            --radius-md: 16px;
-            --radius-lg: 24px;
-            --radius-xl: 32px;
-            --font-display: 'Playfair Display', Georgia, serif;
-            --font-accent: 'Dancing Script', cursive;
-            --font-body: 'Quicksand', 'Segoe UI', sans-serif;
-            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        html { scroll-behavior: smooth; }
-
-        body {
-            font-family: var(--font-body);
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--text-primary);
-            overflow-x: hidden;
-            min-height: 100vh;
-            font-weight: 400;
-            line-height: 1.6;
-        }
-
-        /* Particles */
-        #particles-canvas {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 0; pointer-events: none;
-        }
-
-        /* ============================================
-           WELCOME SCREEN
-           ============================================ */
-        #welcome-screen {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: var(--bg-gradient);
-            z-index: 1000;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            transition: opacity 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .welcome-content { text-align: center; position: relative; z-index: 2; }
-        .welcome-heart-icon {
-            font-size: 4rem; display: block; margin-bottom: 20px;
-            opacity: 0;
-            animation: welcomeFloat 3s ease-in-out infinite, fadeSlideUp 1.5s forwards 0.3s;
-        }
-        #welcome-screen h1 {
-            font-family: var(--font-accent);
-            font-size: clamp(2.5rem, 7vw, 4.5rem);
-            color: var(--accent-pink); margin-bottom: 12px;
-            font-weight: 700; text-shadow: 0 0 30px rgba(255, 143, 163, 0.5);
-            opacity: 0; animation: fadeSlideUp 1.5s forwards 0.6s;
-        }
-        .welcome-subtitle {
-            font-family: var(--font-display); font-style: italic;
-            font-size: clamp(1rem, 2.5vw, 1.3rem);
-            color: var(--text-secondary); margin-bottom: 50px;
-            opacity: 0; animation: fadeSlideUp 1.5s forwards 1s; font-weight: 400;
-        }
-        #start-btn {
-            padding: 14px 50px; font-size: 1.1rem;
-            font-family: var(--font-body); font-weight: 600;
-            color: var(--text-primary);
-            background: linear-gradient(135deg, rgba(255, 107, 138, 0.2), rgba(240, 194, 127, 0.15));
-            border: 1.5px solid var(--glass-border-glow);
-            border-radius: 50px; cursor: pointer;
-            transition: var(--transition-bounce);
-            opacity: 0; animation: fadeSlideUp 1.5s forwards 1.4s;
-            backdrop-filter: blur(10px); letter-spacing: 1px;
-            position: relative; overflow: hidden;
-        }
-        #start-btn::before {
-            content: ''; position: absolute;
-            top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-            transition: left 0.6s ease;
-        }
-        #start-btn:hover::before { left: 100%; }
-        #start-btn:hover {
-            background: linear-gradient(135deg, var(--accent-rose), var(--accent-warm));
-            color: #fff; transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 35px rgba(255, 107, 138, 0.4);
-            border-color: transparent;
-        }
-
-        /* ============================================
-           MAIN CONTENT
-           ============================================ */
-        #main-content {
-            display: none; opacity: 0;
-            transition: opacity 2s ease-in;
-            position: relative; z-index: 1;
-        }
-        .section { padding: 80px 20px; position: relative; }
-        .section-title {
-            font-family: var(--font-accent);
-            font-size: clamp(2rem, 5vw, 3.5rem);
-            color: var(--text-primary); text-align: center;
-            margin-bottom: 10px; font-weight: 700;
-            text-shadow: 0 2px 20px rgba(255, 107, 138, 0.3);
-        }
-        .section-subtitle {
-            font-family: var(--font-display); font-style: italic;
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
-            color: var(--text-muted); text-align: center;
-            margin-bottom: 50px; font-weight: 400;
-        }
-        .section-divider {
-            width: 60px; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--accent-rose), transparent);
-            margin: 0 auto 50px; border: none;
-        }
-        /* Scroll reveal */
-        .reveal {
-            opacity: 0; transform: translateY(40px);
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                        transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .reveal.visible { opacity: 1; transform: translateY(0); }
-        .reveal-delay-1 { transition-delay: 0.1s; }
-        .reveal-delay-2 { transition-delay: 0.2s; }
-        .reveal-delay-3 { transition-delay: 0.3s; }
-
-        /* ============================================
-           HEADER & COUNTER
-           ============================================ */
-        .header-section { padding: 80px 20px 40px; text-align: center; }
-        h1.main-title {
-            font-family: var(--font-accent);
-            font-size: clamp(3rem, 8vw, 5.5rem);
-            color: var(--text-primary); font-weight: 700;
-            text-shadow: 0 5px 25px rgba(0,0,0,0.3);
-            margin-bottom: 8px; line-height: 1.2;
-        }
-        .main-title-accent {
-            display: block; font-family: var(--font-display);
-            font-style: italic; font-size: clamp(1rem, 2.5vw, 1.3rem);
-            color: var(--accent-gold); font-weight: 400;
-            letter-spacing: 2px; margin-top: 5px;
-        }
-        p.header-subtitle {
-            font-family: var(--font-display); font-style: italic;
-            font-size: clamp(1rem, 2.5vw, 1.25rem);
-            font-weight: 300; color: var(--text-secondary);
-            letter-spacing: 0.5px; padding: 0 15px; margin-top: 15px;
-        }
-        .counter-section {
-            background: var(--glass-bg); backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-lg);
-            padding: 35px 25px; margin: 35px auto;
-            width: 90%; max-width: 650px;
-            box-shadow: var(--shadow-soft), var(--shadow-glow);
-            position: relative; overflow: hidden;
-        }
-        .counter-section::before {
-            content: ''; position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,107,138,0.05) 0%, transparent 50%, rgba(240,194,127,0.05) 100%);
-            pointer-events: none;
-        }
-        .counter-label {
-            font-family: var(--font-display); font-style: italic;
-            font-weight: 400; font-size: 1.15rem;
-            color: var(--text-secondary); margin-bottom: 20px;
-        }
-        .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .time-unit { text-align: center; }
-        .time-value {
-            display: block; font-family: var(--font-accent);
-            font-size: clamp(2rem, 5vw, 3rem); font-weight: 700;
-            color: var(--accent-rose);
-            text-shadow: 0 0 15px rgba(255,107,138,0.3);
-            line-height: 1; margin-bottom: 5px;
-        }
-        .time-label {
-            font-size: 0.8rem; font-weight: 500;
-            color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        /* ============================================
-           CUSTOM MUSIC PLAYER
-           ============================================ */
-        .music-floating {
-            position: fixed; bottom: 25px; right: 25px;
-            z-index: 999; display: flex; align-items: center; gap: 12px;
-        }
-        .music-info {
-            background: var(--glass-bg-strong); backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: 50px;
-            padding: 8px 18px; display: none;
-            align-items: center; gap: 10px;
-            animation: slideInRight 0.4s ease; box-shadow: var(--shadow-soft);
-        }
-        .music-info.show { display: flex; }
-        .music-title { font-size: 0.8rem; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
-        .music-visualizer { display: flex; align-items: flex-end; gap: 2px; height: 18px; }
-        .music-bar {
-            width: 3px; background: var(--accent-rose);
-            border-radius: 2px; animation: musicPulse 0.8s ease-in-out infinite;
-        }
-        .music-bar:nth-child(1) { height: 6px; animation-delay: 0s; }
-        .music-bar:nth-child(2) { height: 12px; animation-delay: 0.15s; }
-        .music-bar:nth-child(3) { height: 8px; animation-delay: 0.3s; }
-        .music-bar:nth-child(4) { height: 14px; animation-delay: 0.1s; }
-        .music-bar:nth-child(5) { height: 5px; animation-delay: 0.25s; }
-        .music-bar.paused { animation: none; height: 3px !important; }
-        .music-toggle {
-            width: 52px; height: 52px; border-radius: 50%;
-            background: linear-gradient(135deg, var(--accent-rose), var(--accent-warm));
-            border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.3rem; color: white;
-            box-shadow: 0 5px 25px rgba(255,107,138,0.4);
-            transition: var(--transition-bounce);
-        }
-        .music-toggle:hover { transform: scale(1.1); box-shadow: 0 8px 35px rgba(255,107,138,0.6); }
-        .music-toggle.playing { animation: musicGlow 2s ease-in-out infinite; }
-
-        /* ============================================
-           TIMELINE
-           ============================================ */
-        .timeline-container {
-            max-width: 800px; margin: 0 auto;
-            position: relative; padding: 20px 0;
-        }
-        .timeline-line {
-            position: absolute; left: 50%; top: 0; bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, transparent, var(--accent-rose), var(--accent-gold), var(--accent-rose), transparent);
-            transform: translateX(-50%);
-        }
-        .timeline-item {
-            display: flex; align-items: flex-start;
-            margin-bottom: 60px; position: relative;
-        }
-        .timeline-item:nth-child(even) { flex-direction: row-reverse; }
-        .timeline-dot {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            width: 18px; height: 18px;
-            background: var(--accent-rose); border-radius: 50%;
-            border: 3px solid var(--bg-primary);
-            box-shadow: 0 0 20px var(--accent-glow);
-            z-index: 2; top: 20px;
-        }
-        .timeline-card {
-            width: calc(50% - 40px);
-            background: var(--glass-bg); backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-md);
-            padding: 22px; box-shadow: var(--shadow-soft);
-            transition: var(--transition-smooth);
-            position: relative;
-        }
-        .timeline-card:hover {
-            border-color: var(--glass-border-glow);
-            box-shadow: var(--shadow-soft), var(--shadow-glow);
-            transform: translateY(-3px);
-        }
-        .timeline-date { font-family: var(--font-accent); font-size: 1.1rem; color: var(--accent-gold); margin-bottom: 6px; font-weight: 600; }
-        .timeline-event { font-family: var(--font-display); font-size: 1.1rem; color: var(--text-primary); margin-bottom: 6px; font-weight: 600; }
-        .timeline-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
-        .timeline-icon { font-size: 1.5rem; margin-bottom: 8px; display: block; }
-        @media (max-width: 768px) {
-            .timeline-line { left: 20px; }
-            .timeline-item, .timeline-item:nth-child(even) { flex-direction: row; padding-left: 50px; }
-            .timeline-dot { left: 20px; }
-            .timeline-card { width: 100%; }
-        }
-
-        /* ============================================
-           HERO SECTION
-           ============================================ */
-        .hero-grid {
-            display: grid; grid-template-columns: 1fr;
-            gap: 25px; width: 90%; max-width: 950px; margin: 0 auto;
-        }
-        @media (min-width: 768px) { .hero-grid { grid-template-columns: 1fr 1fr; } }
-        .hero-card {
-            background: #fff; padding: 10px; padding-bottom: 45px;
-            border-radius: 6px; box-shadow: var(--shadow-deep);
-            transition: var(--transition-smooth); position: relative;
-        }
-        .hero-card img, .hero-card video {
-            width: 100%; height: auto; display: block;
-            border-radius: 3px; object-fit: cover;
-        }
-        .hero-card:hover { transform: translateY(-8px); box-shadow: 0 25px 50px rgba(0,0,0,0.6); }
-        .hero-caption {
-            position: absolute; bottom: 10px; left: 0; right: 0;
-            text-align: center; font-family: var(--font-accent);
-            font-size: 1rem; color: #666; font-weight: 600;
-        }
-
-        /* ============================================
-           ALBUM PAGE FLIP
-           ============================================ */
-        .album-container { max-width: 900px; margin: 0 auto; perspective: 1500px; }
-        .album-book {
-            position: relative; width: 100%; max-width: 750px;
-            margin: 0 auto; aspect-ratio: 4 / 3;
-            background: var(--glass-bg);
-            border-radius: var(--radius-lg);
-            border: 1px solid var(--glass-border);
-            overflow: hidden; box-shadow: var(--shadow-deep);
-        }
-        .album-pages { position: relative; width: 100%; height: 100%; }
-        .album-page {
-            position: absolute; top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 30px; opacity: 0; transform: scale(0.95);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-            pointer-events: none;
-        }
-        .album-page.active { opacity: 1; transform: scale(1); pointer-events: auto; }
-        .album-page-img {
-            max-width: 80%; max-height: 55%; object-fit: contain;
-            border-radius: var(--radius-sm); box-shadow: var(--shadow-soft); margin-bottom: 15px;
-        }
-        .album-page-caption {
-            font-family: var(--font-accent); font-size: clamp(1rem, 2.5vw, 1.4rem);
-            color: var(--accent-pink); text-align: center; font-weight: 600;
-        }
-        .album-page-number {
-            font-family: var(--font-display); font-style: italic;
-            font-size: 0.85rem; color: var(--text-muted); margin-top: 6px;
-        }
-        .album-controls {
-            display: flex; justify-content: center; align-items: center;
-            gap: 30px; margin-top: 25px;
-        }
-        .album-btn {
-            width: 50px; height: 50px; border-radius: 50%;
-            background: var(--glass-bg-strong); backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border); color: var(--text-primary);
-            font-size: 1.2rem; cursor: pointer;
-            transition: var(--transition-bounce);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .album-btn:hover {
-            background: var(--accent-rose); border-color: transparent;
-            transform: scale(1.1); box-shadow: 0 5px 20px rgba(255,107,138,0.4);
-        }
-        .album-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
-        .album-counter { font-family: var(--font-display); font-size: 0.95rem; color: var(--text-muted); }
-        .album-dots { display: flex; gap: 8px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
-        .album-dot {
-            width: 8px; height: 8px; border-radius: 50%;
-            background: var(--glass-border); transition: var(--transition-smooth); cursor: pointer;
-        }
-        .album-dot.active {
-            background: var(--accent-rose);
-            box-shadow: 0 0 10px var(--accent-glow); transform: scale(1.3);
-        }
-
-        /* ============================================
-           GALLERY
-           ============================================ */
-        .gallery-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 18px; width: 92%; max-width: 1100px; margin: 0 auto;
-        }
-        @media (min-width: 600px) { .gallery-grid { grid-template-columns: repeat(3, 1fr); gap: 22px; } }
-        @media (min-width: 900px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); gap: 25px; } }
-        .gallery-card {
-            background: #fff; padding: 8px; padding-bottom: 35px;
-            border-radius: 4px; box-shadow: var(--shadow-deep);
-            cursor: pointer; transition: var(--transition-smooth); position: relative;
-        }
-        .gallery-card:nth-child(even) { transform: rotate(1.5deg); }
-        .gallery-card:nth-child(odd) { transform: rotate(-1.5deg); }
-        .gallery-card img {
-            width: 100%; height: auto; object-fit: cover;
-            border-radius: 2px; display: block;
-            filter: brightness(0.92) saturate(0.95); transition: var(--transition-smooth);
-        }
-        .gallery-card:hover {
-            transform: scale(1.06) rotate(0deg) translateY(-8px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.7); z-index: 10;
-        }
-        .gallery-card:hover img { filter: brightness(1) saturate(1); }
-        .gallery-card-label {
-            position: absolute; bottom: 8px; left: 0; right: 0;
-            text-align: center; font-family: var(--font-accent); font-size: 0.75rem; color: #999;
-        }
-
-        /* ============================================
-           LOVE LETTER
-           ============================================ */
-        .letter-container { max-width: 700px; margin: 0 auto; position: relative; }
-        .letter-card {
-            background: linear-gradient(145deg, #fdf6f0, #fff9f5);
-            border-radius: var(--radius-lg); padding: 45px 35px;
-            position: relative; box-shadow: var(--shadow-deep); overflow: hidden;
-        }
-        .letter-card::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(transparent, transparent 30px, rgba(200,180,170,0.15) 30px, rgba(200,180,170,0.15) 31px);
-            pointer-events: none;
-        }
-        .letter-card::after {
-            content: '💌'; position: absolute; top: 15px; right: 20px;
-            font-size: 2rem; opacity: 0.5;
-        }
-        .letter-greeting { font-family: var(--font-accent); font-size: 1.8rem; color: var(--accent-rose); margin-bottom: 20px; font-weight: 700; }
-        .letter-body {
-            font-family: var(--font-display); font-style: italic;
-            font-size: 1.05rem; color: #5a4a42; line-height: 2; margin-bottom: 25px;
-        }
-        .letter-signature { font-family: var(--font-accent); font-size: 1.5rem; color: var(--accent-rose); text-align: right; font-weight: 600; }
-
-        /* ============================================
-           MODAL LIGHTBOX
-           ============================================ */
-        .modal-overlay {
-            display: none; position: fixed; z-index: 9999;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 5, 10, 0.95);
-            backdrop-filter: blur(12px); justify-content: center;
-            align-items: center; padding: 15px;
-        }
-        .modal-frame {
-            position: relative; background: white;
-            padding: 12px 12px 55px; border-radius: 6px;
-            box-shadow: 0 15px 60px rgba(255,107,138,0.15);
-            animation: modalPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            max-width: 90vw; max-height: 92vh;
-            display: flex; flex-direction: column;
-        }
-        @media (min-width: 768px) { .modal-frame { max-width: 80vw; max-height: 90vh; padding: 15px 15px 60px; } }
-        .modal-frame img {
-            max-width: 100%; max-height: calc(92vh - 75px);
-            object-fit: contain; border-radius: 3px;
-        }
-        @media (min-width: 768px) { .modal-frame img { max-height: calc(90vh - 80px); } }
-        .modal-close {
-            position: absolute; top: -40px; right: 0;
-            color: var(--text-primary); font-size: 30px; cursor: pointer;
-            opacity: 0.7; transition: var(--transition-smooth);
-            background: none; border: none; width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .modal-close:hover { opacity: 1; color: var(--accent-rose); transform: rotate(90deg); }
-        .modal-nav {
-            position: absolute; top: 50%; transform: translateY(-50%);
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-            color: white; border: none; width: 44px; height: 44px;
-            border-radius: 50%; font-size: 1.2rem; cursor: pointer;
-            transition: var(--transition-smooth);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .modal-nav:hover { background: var(--accent-rose); }
-        .modal-prev { left: -60px; }
-        .modal-next { right: -60px; }
-        @media (max-width: 768px) {
-            .modal-prev { left: 5px; }
-            .modal-next { right: 5px; }
-            .modal-close { top: 10px; right: 10px; color: #333; }
-        }
-
-        /* ============================================
-           FOOTER
-           ============================================ */
-        .footer { padding: 50px 20px; text-align: center; position: relative; }
-        .footer-heart { font-size: 2rem; display: block; margin-bottom: 15px; animation: heartbeat 2s ease-in-out infinite; }
-        .footer-text { font-family: var(--font-accent); font-size: 1.3rem; color: var(--text-secondary); letter-spacing: 1px; }
-        .footer-year { font-family: var(--font-body); font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
-
-        /* Click hearts */
-        .click-heart {
-            position: fixed; color: var(--accent-rose); font-size: 22px;
-            opacity: 0.9; pointer-events: none;
-            animation: heartFloat 1.2s ease-out forwards;
-            z-index: 9998; transform: translate(-50%, -50%);
-            text-shadow: 0 0 15px rgba(255,107,138,0.8);
-        }
-        /* Scroll top */
-        .scroll-top-btn {
-            position: fixed; bottom: 90px; right: 28px;
-            width: 44px; height: 44px; border-radius: 50%;
-            background: var(--glass-bg-strong); backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border); color: var(--text-primary);
-            font-size: 1.1rem; cursor: pointer; transition: var(--transition-smooth);
-            display: none; align-items: center; justify-content: center; z-index: 998;
-        }
-        .scroll-top-btn.show { display: flex; }
-        .scroll-top-btn:hover {
-            background: var(--accent-rose); border-color: transparent;
-            transform: translateY(-3px); box-shadow: 0 5px 20px rgba(255,107,138,0.4);
-        }
-
-        /* ============================================
-           EDIT MODE
-           ============================================ */
-        .edit-fab {
-            position: fixed; bottom: 25px; left: 25px; z-index: 997;
-            display: flex; align-items: center; gap: 8px;
-            padding: 12px 20px;
-            background: var(--glass-bg-strong); backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border); border-radius: 50px;
-            color: var(--text-primary); font-family: var(--font-body);
-            font-size: 0.85rem; font-weight: 600;
-            cursor: pointer; transition: var(--transition-smooth);
-            box-shadow: var(--shadow-soft);
-        }
-        .edit-fab:hover { background: rgba(255,107,138,0.15); border-color: var(--accent-rose); }
-        .edit-fab.active {
-            background: linear-gradient(135deg, var(--accent-rose), var(--accent-warm));
-            border-color: transparent; color: white;
-            box-shadow: 0 5px 25px rgba(255,107,138,0.5);
-        }
-
-        /* Gallery edit controls */
-        .photo-edit-controls {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            display: none; pointer-events: none; z-index: 5;
-        }
-        .edit-mode .gallery-card .photo-edit-controls { display: block; pointer-events: auto; }
-        .edit-mode .gallery-card { cursor: default !important; }
-        .edit-mode .gallery-card img { pointer-events: none; }
-
-        .photo-delete-btn {
-            position: absolute; top: -10px; right: -10px;
-            width: 26px; height: 26px;
-            background: #e53e3e; border: 2px solid white;
-            border-radius: 50%; color: white;
-            font-size: 0.7rem; font-weight: 700;
-            cursor: pointer; display: flex;
-            align-items: center; justify-content: center;
-            transition: var(--transition-smooth); z-index: 6;
-        }
-        .photo-delete-btn:hover { background: #c53030; transform: scale(1.15); }
-        .photo-caption-btn {
-            position: absolute; bottom: 4px; left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.65); color: white;
-            border: none; border-radius: 20px;
-            padding: 3px 10px; font-size: 0.65rem;
-            cursor: pointer; white-space: nowrap;
-            transition: var(--transition-smooth); font-family: var(--font-body);
-        }
-        .photo-caption-btn:hover { background: var(--accent-rose); }
-
-        /* Add photo card */
-        .add-photo-card {
-            background: var(--glass-bg) !important;
-            border: 2px dashed var(--glass-border-glow) !important;
-            box-shadow: none !important;
-            cursor: pointer !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            min-height: 150px;
-            padding: 0 !important;
-            transition: var(--transition-smooth);
-            border-radius: 4px !important;
-            transform: none !important;
-        }
-        .add-photo-card:hover {
-            border-color: var(--accent-rose) !important;
-            background: rgba(255,107,138,0.08) !important;
-            transform: scale(1.03) !important;
-        }
-        .add-photo-content { text-align: center; color: var(--text-muted); padding: 20px; }
-        .add-photo-content .add-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
-        .add-photo-content span { font-size: 0.8rem; font-weight: 600; display: block; font-family: var(--font-body); }
-
-        /* Timeline edit */
-        .timeline-item-controls {
-            position: absolute; top: 8px; right: 8px;
-            display: none; gap: 5px;
-        }
-        .edit-mode .timeline-item-controls { display: flex; }
-        .tl-ctrl-btn {
-            width: 28px; height: 28px; border-radius: 6px;
-            border: 1px solid var(--glass-border); color: var(--text-primary);
-            font-size: 0.7rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: var(--transition-smooth); background: rgba(255,255,255,0.08);
-        }
-        .tl-ctrl-btn:hover { background: var(--accent-rose); border-color: transparent; }
-        .tl-ctrl-btn.delete:hover { background: #e53e3e; }
-
-        /* Add timeline btn */
-        .add-timeline-wrap { text-align: center; margin-top: 20px; }
-        .add-timeline-btn {
-            display: none;
-            padding: 10px 28px;
-            background: var(--glass-bg);
-            border: 1.5px dashed var(--glass-border-glow);
-            border-radius: 50px; color: var(--text-secondary);
-            font-family: var(--font-body); font-size: 0.9rem;
-            cursor: pointer; transition: var(--transition-smooth);
-        }
-        .edit-mode .add-timeline-btn { display: inline-block; }
-        .add-timeline-btn:hover { border-color: var(--accent-rose); color: var(--accent-rose); background: rgba(255,107,138,0.08); }
-
-        /* Letter edit */
-        .letter-edit-btn {
-            display: none; margin-top: 20px;
-            padding: 10px 28px;
-            background: linear-gradient(135deg, var(--accent-rose), var(--accent-warm));
-            border: none; border-radius: 50px; color: white;
-            font-family: var(--font-body); font-size: 0.9rem;
-            font-weight: 600; cursor: pointer;
-            transition: var(--transition-smooth);
-        }
-        .edit-mode .letter-edit-btn { display: inline-block; }
-        .letter-edit-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(255,107,138,0.4); }
-
-        /* Album caption edit btn */
-        .album-caption-edit-btn {
-            display: none;
-            margin-top: 10px; padding: 5px 14px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 20px; color: var(--text-primary);
-            font-size: 0.75rem; cursor: pointer;
-            transition: var(--transition-smooth); font-family: var(--font-body);
-        }
-        .edit-mode .album-caption-edit-btn { display: inline-flex; align-items: center; gap: 4px; }
-        .edit-mode .album-caption-edit-btn:hover { background: var(--accent-rose); border-color: transparent; }
-
-        /* ============================================
-           ADMIN MODALS
-           ============================================ */
-        .admin-modal-overlay {
-            display: none; position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 3, 8, 0.88);
-            backdrop-filter: blur(10px); z-index: 10001;
-            justify-content: center; align-items: center; padding: 15px;
-        }
-        .admin-modal-overlay.show { display: flex; }
-        .admin-modal {
-            background: linear-gradient(145deg, var(--bg-secondary), var(--bg-primary));
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-xl); padding: 35px 30px;
-            width: 100%; max-width: 500px; max-height: 90vh;
-            overflow-y: auto; box-shadow: var(--shadow-deep), var(--shadow-glow);
-            animation: modalPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative; scrollbar-width: thin;
-            scrollbar-color: var(--accent-rose) transparent;
-        }
-        .admin-modal-wide { max-width: 600px; }
-        .admin-modal-sm { max-width: 380px; }
-        .admin-modal-title {
-            font-family: var(--font-accent); font-size: 1.6rem;
-            color: var(--accent-pink); margin-bottom: 24px; font-weight: 700;
-        }
-        .admin-modal-close {
-            position: absolute; top: 15px; right: 18px;
-            background: none; border: none; color: var(--text-muted);
-            font-size: 1.2rem; cursor: pointer; transition: var(--transition-smooth);
-            width: 32px; height: 32px;
-            display: flex; align-items: center; justify-content: center; border-radius: 8px;
-        }
-        .admin-modal-close:hover { color: var(--accent-rose); background: rgba(255,107,138,0.1); }
-
-        /* Form elements */
-        .form-group { margin-bottom: 16px; }
-        .form-label {
-            display: block; font-size: 0.82rem; font-weight: 600;
-            color: var(--text-secondary); margin-bottom: 7px; letter-spacing: 0.3px;
-        }
-        .form-input, .form-textarea, .form-select {
-            width: 100%; padding: 11px 14px;
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm);
-            color: var(--text-primary); font-family: var(--font-body);
-            font-size: 0.92rem; transition: var(--transition-smooth); outline: none;
-        }
-        .form-input:focus, .form-textarea:focus {
-            border-color: var(--accent-rose); background: var(--glass-bg-strong);
-            box-shadow: 0 0 0 3px rgba(255,107,138,0.15);
-        }
-        .form-textarea { min-height: 110px; resize: vertical; line-height: 1.6; }
-
-        /* Drop zone */
-        .drop-zone {
-            border: 2px dashed var(--glass-border-glow);
-            border-radius: var(--radius-md); padding: 35px 20px;
-            text-align: center; cursor: pointer;
-            transition: var(--transition-smooth); margin-bottom: 16px;
-            position: relative;
-        }
-        .drop-zone:hover, .drop-zone.drag-over {
-            border-color: var(--accent-rose); background: rgba(255,107,138,0.07);
-        }
-        .drop-zone input[type="file"] {
-            position: absolute; opacity: 0; top: 0; left: 0;
-            width: 100%; height: 100%; cursor: pointer;
-        }
-        .drop-zone-icon { font-size: 2.2rem; display: block; margin-bottom: 8px; }
-        .drop-zone-text { font-size: 0.87rem; color: var(--text-muted); line-height: 1.5; }
-        .drop-zone-text strong { color: var(--accent-pink); }
-
-        /* Preview grid */
-        .preview-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 8px; margin-bottom: 16px;
-        }
-        .preview-item {
-            position: relative; aspect-ratio: 1;
-            border-radius: var(--radius-sm); overflow: hidden;
-            background: var(--glass-bg);
-        }
-        .preview-item img { width: 100%; height: 100%; object-fit: cover; }
-        .preview-remove {
-            position: absolute; top: 4px; right: 4px;
-            width: 20px; height: 20px; background: rgba(0,0,0,0.75);
-            color: white; border: none; border-radius: 50%;
-            cursor: pointer; font-size: 0.6rem;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .preview-remove:hover { background: #e53e3e; }
-        .preview-caption-wrap { padding: 5px 4px 0; }
-        .preview-caption-input {
-            width: 100%; padding: 4px 6px;
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            border-radius: 4px; color: var(--text-primary);
-            font-size: 0.65rem; font-family: var(--font-body); outline: none;
-        }
-        .preview-caption-input:focus { border-color: var(--accent-rose); }
-
-        /* Buttons */
-        .btn-primary {
-            width: 100%; padding: 12px;
-            background: linear-gradient(135deg, var(--accent-rose), var(--accent-warm));
-            border: none; border-radius: var(--radius-sm); color: white;
-            font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
-            cursor: pointer; transition: var(--transition-smooth); margin-top: 5px;
-        }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(255,107,138,0.4); }
-        .btn-secondary {
-            width: 100%; padding: 10px;
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            border-radius: var(--radius-sm); color: var(--text-secondary);
-            font-family: var(--font-body); font-size: 0.9rem;
-            cursor: pointer; transition: var(--transition-smooth); margin-top: 8px;
-        }
-        .btn-secondary:hover { background: var(--glass-bg-strong); }
-        .btn-danger { background: linear-gradient(135deg, #e53e3e, #c53030) !important; }
-        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-        .btn-row .btn-primary, .btn-row .btn-secondary { margin-top: 0; }
-
-        /* Icon picker */
-        .icon-picker {
-            display: flex; flex-wrap: wrap; gap: 6px;
-            padding: 10px; background: var(--glass-bg);
-            border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
-        }
-        .icon-opt {
-            width: 34px; height: 34px; display: flex;
-            align-items: center; justify-content: center;
-            cursor: pointer; border-radius: 6px; font-size: 1.1rem;
-            transition: var(--transition-smooth); border: 2px solid transparent;
-        }
-        .icon-opt:hover { background: var(--glass-bg-strong); }
-        .icon-opt.selected { border-color: var(--accent-rose); background: rgba(255,107,138,0.15); }
-
-        /* ============================================
-           TOAST
-           ============================================ */
-        .toast-container {
-            position: fixed; top: 20px; right: 20px;
-            z-index: 99999; display: flex; flex-direction: column; gap: 8px;
-        }
-        .toast {
-            background: var(--glass-bg-strong); backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border); border-radius: var(--radius-sm);
-            padding: 11px 18px; color: var(--text-primary);
-            font-family: var(--font-body); font-size: 0.88rem; font-weight: 500;
-            box-shadow: var(--shadow-soft); animation: toastIn 0.4s ease;
-            max-width: 270px; display: flex; align-items: center; gap: 8px;
-        }
-        .toast.success { border-color: rgba(72,187,120,0.5); }
-        .toast.error { border-color: rgba(229,62,62,0.5); }
-
-        /* ============================================
-           ANIMATIONS
-           ============================================ */
-        @keyframes fadeSlideUp {
-            from { opacity: 0; transform: translateY(25px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes welcomeFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
-        }
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            15% { transform: scale(1.15); }
-            30% { transform: scale(1); }
-            45% { transform: scale(1.1); }
-        }
-        @keyframes musicPulse {
-            0%, 100% { transform: scaleY(0.4); }
-            50% { transform: scaleY(1); }
-        }
-        @keyframes musicGlow {
-            0%, 100% { box-shadow: 0 5px 25px rgba(255,107,138,0.4); }
-            50% { box-shadow: 0 5px 35px rgba(255,107,138,0.7), 0 0 60px rgba(255,107,138,0.2); }
-        }
-        @keyframes heartFloat {
-            0% { transform: translate(-50%,-50%) scale(0.5); opacity: 0.9; }
-            50% { transform: translate(-50%,-70px) scale(1.3); opacity: 1; }
-            100% { transform: translate(-50%,-120px) scale(1.6); opacity: 0; }
-        }
-        @keyframes modalPopIn {
-            from { transform: scale(0.85); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        @keyframes toastIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
+<!-- ============ PARTICLES ============ -->
 <canvas id="particles-canvas"></canvas>
+
+<!-- ============ AUDIO ============ -->
 <audio id="bg-music" loop preload="auto">
     <source src="nhac-cua-chung-minh.mp3" type="audio/mpeg">
 </audio>
 
-<!-- WELCOME SCREEN -->
+<!-- ============ WELCOME SCREEN ============ -->
 <div id="welcome-screen">
     <div class="welcome-content">
         <span class="welcome-heart-icon">💕</span>
@@ -878,10 +28,10 @@
     </div>
 </div>
 
-<!-- MAIN CONTENT -->
+<!-- ============ MAIN CONTENT ============ -->
 <div id="main-content">
 
-    <!-- HEADER -->
+    <!-- HEADER + COUNTER -->
     <header class="header-section">
         <div class="reveal">
             <h1 class="main-title">
@@ -901,7 +51,7 @@
         </div>
     </header>
 
-    <!-- TIMELINE -->
+    <!-- TIMELINE (rendered by render.js) -->
     <section class="section" id="timeline-section">
         <h2 class="section-title reveal">Hành Trình Yêu Thương</h2>
         <p class="section-subtitle reveal">Mỗi khoảnh khắc bên nhau đều là kỷ niệm</p>
@@ -915,7 +65,7 @@
         </div>
     </section>
 
-    <!-- HERO -->
+    <!-- HERO (static) -->
     <section class="section" id="hero-section">
         <h2 class="section-title reveal">Khoảnh Khắc Đẹp Nhất</h2>
         <p class="section-subtitle reveal">Những khoảnh khắc anh muốn giữ mãi</p>
@@ -934,7 +84,7 @@
         </div>
     </section>
 
-    <!-- ALBUM -->
+    <!-- ALBUM (rendered by render.js) -->
     <section class="section" id="album-section">
         <h2 class="section-title reveal">Album Kỷ Niệm</h2>
         <p class="section-subtitle reveal">Lật từng trang để xem lại kỷ niệm của chúng mình</p>
@@ -952,7 +102,7 @@
         </div>
     </section>
 
-    <!-- GALLERY -->
+    <!-- GALLERY (rendered by render.js) -->
     <section class="section" id="gallery-section">
         <h2 class="section-title reveal">Bộ Sưu Tập Ảnh</h2>
         <p class="section-subtitle reveal">Chạm vào ảnh để xem rõ hơn nhé</p>
@@ -960,7 +110,7 @@
         <div class="gallery-grid" id="gallery-grid"></div>
     </section>
 
-    <!-- LETTER -->
+    <!-- LETTER (rendered by render.js) -->
     <section class="section" id="letter-section">
         <h2 class="section-title reveal">Lời Muốn Nói</h2>
         <p class="section-subtitle reveal">Gửi đến em — người anh yêu thương nhất</p>
@@ -968,7 +118,7 @@
         <div class="letter-container reveal">
             <div class="letter-card">
                 <div class="letter-greeting" id="letter-greeting"></div>
-                <div class="letter-body" id="letter-body"></div>
+                <div class="letter-body"     id="letter-body"></div>
                 <div class="letter-signature" id="letter-signature"></div>
             </div>
             <div style="text-align:center;">
@@ -977,6 +127,7 @@
         </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="footer">
         <span class="footer-heart">💖</span>
         <div class="footer-text">Dành trọn cho em — Tình yêu của đời anh</div>
@@ -984,7 +135,7 @@
     </footer>
 </div>
 
-<!-- LIGHTBOX MODAL -->
+<!-- ============ LIGHTBOX MODAL ============ -->
 <div class="modal-overlay" id="imageModal">
     <div class="modal-frame">
         <button class="modal-close" onclick="closeModal()">✕</button>
@@ -994,10 +145,10 @@
     </div>
 </div>
 
-<!-- MUSIC PLAYER -->
+<!-- ============ MUSIC PLAYER ============ -->
 <div class="music-floating">
     <div class="music-info" id="music-info">
-        <div class="music-visualizer" id="music-visualizer">
+        <div class="music-visualizer">
             <div class="music-bar"></div><div class="music-bar"></div>
             <div class="music-bar"></div><div class="music-bar"></div>
             <div class="music-bar"></div>
@@ -1007,40 +158,49 @@
     <button class="music-toggle" id="music-toggle" onclick="toggleMusic()">🎵</button>
 </div>
 
-<!-- SCROLL TOP -->
-<button class="scroll-top-btn" id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<!-- ============ SCROLL TOP ============ -->
+<button class="scroll-top-btn" id="scroll-top">↑</button>
 
-<!-- EDIT FAB -->
+<!-- ============ EDIT FAB ============ -->
 <button class="edit-fab" id="edit-fab" onclick="toggleEditMode()">✏️ Chỉnh sửa</button>
 
 <!-- ============ ADMIN MODALS ============ -->
 
-<!-- Add Photo Modal -->
+<!-- Add Photo -->
 <div class="admin-modal-overlay" id="modal-add-photo">
     <div class="admin-modal admin-modal-wide">
         <button class="admin-modal-close" onclick="closeAdminModal('modal-add-photo')">✕</button>
         <div class="admin-modal-title">📷 Thêm ảnh mới</div>
+
         <div class="drop-zone" id="drop-zone">
             <input type="file" id="file-input" accept="image/*" multiple onchange="handleFileSelect(this.files)">
             <span class="drop-zone-icon">🖼️</span>
             <div class="drop-zone-text">
-                <strong>Kéo & thả ảnh vào đây</strong><br>
+                <strong>Kéo &amp; thả ảnh vào đây</strong><br>
                 hoặc click để chọn ảnh từ máy<br>
-                <small style="opacity:0.6;">(Hỗ trợ nhiều ảnh, tự động nén)</small>
+                <small style="opacity:0.6;">(Nhiều ảnh, tự động nén, lưu vào IndexedDB)</small>
             </div>
         </div>
+
+        <!-- Upload progress -->
+        <div class="upload-progress" id="upload-progress">
+            <span class="progress-label" id="progress-label">Đang xử lý...</span>
+            <div class="progress-bar-wrap">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+
         <div class="preview-grid" id="preview-grid"></div>
         <button class="btn-primary" onclick="confirmAddPhotos()">💾 Thêm vào album</button>
         <button class="btn-secondary" onclick="closeAdminModal('modal-add-photo')">Huỷ</button>
     </div>
 </div>
 
-<!-- Edit Caption Modal -->
+<!-- Edit Caption -->
 <div class="admin-modal-overlay" id="modal-edit-caption">
     <div class="admin-modal admin-modal-sm">
         <button class="admin-modal-close" onclick="closeAdminModal('modal-edit-caption')">✕</button>
         <div class="admin-modal-title">✏️ Sửa caption</div>
-        <input type="hidden" id="edit-caption-id">
         <div class="form-group">
             <label class="form-label">Nội dung caption</label>
             <input type="text" class="form-input" id="edit-caption-text" placeholder="Nhập caption ảnh...">
@@ -1050,12 +210,11 @@
     </div>
 </div>
 
-<!-- Timeline Modal (Add/Edit) -->
+<!-- Add / Edit Timeline -->
 <div class="admin-modal-overlay" id="modal-timeline">
     <div class="admin-modal">
         <button class="admin-modal-close" onclick="closeAdminModal('modal-timeline')">✕</button>
         <div class="admin-modal-title" id="timeline-modal-title">📅 Thêm sự kiện</div>
-        <input type="hidden" id="timeline-edit-id">
         <div class="form-group">
             <label class="form-label">Icon</label>
             <div class="icon-picker" id="icon-picker">
@@ -1096,7 +255,7 @@
     </div>
 </div>
 
-<!-- Letter Edit Modal -->
+<!-- Edit Letter -->
 <div class="admin-modal-overlay" id="modal-letter">
     <div class="admin-modal admin-modal-wide">
         <button class="admin-modal-close" onclick="closeAdminModal('modal-letter')">✕</button>
@@ -1107,7 +266,7 @@
         </div>
         <div class="form-group">
             <label class="form-label">Nội dung thư</label>
-            <textarea class="form-textarea" id="letter-body-input" style="min-height:200px;" placeholder="Viết lời muốn nói với người em yêu..."></textarea>
+            <textarea class="form-textarea" id="letter-body-input" style="min-height:200px;" placeholder="Viết lời muốn nói..."></textarea>
         </div>
         <div class="form-group">
             <label class="form-label">Chữ ký</label>
@@ -1118,7 +277,7 @@
     </div>
 </div>
 
-<!-- Confirm Delete Modal -->
+<!-- Confirm Delete -->
 <div class="admin-modal-overlay" id="modal-confirm">
     <div class="admin-modal admin-modal-sm" style="text-align:center;">
         <div class="admin-modal-title" style="margin-bottom:10px;">🗑️ Xác nhận xóa</div>
@@ -1130,770 +289,16 @@
     </div>
 </div>
 
-<!-- TOAST CONTAINER -->
+<!-- ============ TOAST ============ -->
 <div class="toast-container" id="toast-container"></div>
 
-<script>
-/* ================================================
-   DATA LAYER
-   ================================================ */
-const STORAGE_KEY = 'kyniemalbum_v3';
+<!-- ============ SCRIPTS (dependency order) ============ -->
+<script src="js/utils.js"></script>
+<script src="js/data.js"></script>
+<script src="js/effects.js"></script>
+<script src="js/render.js"></script>
+<script src="js/edit.js"></script>
+<script src="js/app.js"></script>
 
-const DEFAULT_PHOTOS = [
-    { id: 'p1', src: 'PNT00120260624135008_01.jpg', albumCaption: 'Khoảnh khắc ngọt ngào 💕', isDefault: true },
-    { id: 'p2', src: 'PNT00120260624135008_02.jpg', albumCaption: 'Nụ cười của em 🌸', isDefault: true },
-    { id: 'p3', src: 'PNT00120260624135008_03.jpg', albumCaption: 'Bên nhau mãi nhé ✨', isDefault: true },
-    { id: 'p4', src: 'PNT00120260624135008_04.jpg', albumCaption: 'Tình yêu của chúng mình 💖', isDefault: true },
-    { id: 'p5', src: 'PNT00120260624135008_05.jpg', albumCaption: 'Hạnh phúc là đây 🥰', isDefault: true },
-    { id: 'p6', src: 'PNT00120260624135008_06.jpg', albumCaption: 'Ngày tháng bên em 🌷', isDefault: true },
-    { id: 'p7', src: 'PNT00120260624135008_07.jpg', albumCaption: 'Yêu em nhiều lắm 💗', isDefault: true },
-    { id: 'p8', src: 'PNT00120260624135008_08.jpg', albumCaption: 'Mãi bên nhau em nhé 💞', isDefault: true },
-    { id: 'p9', src: 'PNT00120260624135008_09.jpg', albumCaption: 'Và còn rất nhiều kỷ niệm nữa... 🌟', isDefault: true }
-];
-
-const DEFAULT_TIMELINE = [
-    { id: 't1', icon: '💬', date: '14 / 06 / 2026', event: 'Lần đầu nhắn tin làm quen', desc: 'Một tin nhắn nhỏ — mở đầu cho câu chuyện lớn nhất cuộc đời anh. Cảm ơn em đã trả lời...' },
-    { id: 't2', icon: '☕', date: '16 / 06 / 2026', event: 'First Date 💕', desc: 'Lần đầu tiên được gặp em — tim anh đập loạn cả buổi, không biết em có để ý không...' },
-    { id: 't3', icon: '🌸', date: '17 / 06 / 2026', event: 'Second Date 🥰', desc: 'Một ngày nữa bên em — anh biết mình đã thích em rồi, chỉ chưa dám nói thôi...' },
-    { id: 't4', icon: '🌟', date: '20 / 06 / 2026', event: 'Third Date ✨', desc: 'Lần thứ ba gặp nhau — anh biết từ đây em là người anh muốn ở bên mãi mãi.' },
-    { id: 't5', icon: '💖', date: 'Và còn rất nhiều ngày nữa...', event: 'Anh yêu em ❤️', desc: 'Từ đó đến giờ, mỗi ngày bên em đều là một trang mới trong cuốn album tình yêu này. Anh yêu em — hôm nay, ngày mai và mãi mãi.' }
-];
-
-const DEFAULT_LETTER = {
-    greeting: 'Em yêu của anh,',
-    body: 'Anh không biết phải bắt đầu từ đâu, vì mỗi khi nghĩ về em, trái tim anh lại tràn ngập những cảm xúc ấm áp nhất.\n\nCảm ơn em đã đến bên anh, đã mang theo nụ cười và ánh sáng lấp đầy cuộc sống của anh. Mỗi ngày bên em là một ngày đặc biệt, mỗi khoảnh khắc bên em là một kỷ niệm anh muốn giữ mãi.\n\nCuốn album nhỏ này — anh làm để em biết rằng, từng khoảnh khắc bên em, anh đều trân trọng. Từng nụ cười, từng ánh mắt, từng giây phút đời thường... tất cả đều là kho báu của anh.\n\nAnh hứa sẽ luôn ở bên em, viết tiếp từng trang mới trong cuốn album tình yêu này. Yêu em nhiều lắm! 💕',
-    signature: 'Mãi yêu em,\nAnh của em ❤️'
-};
-
-let appData = loadData();
-
-function loadData() {
-    try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            const d = JSON.parse(saved);
-            // Ensure all fields exist
-            if (!d.photos) d.photos = [...DEFAULT_PHOTOS];
-            if (!d.timeline) d.timeline = [...DEFAULT_TIMELINE];
-            if (!d.letter) d.letter = { ...DEFAULT_LETTER };
-            if (!d.startDate) d.startDate = '2026-06-09T00:00:00';
-            return d;
-        }
-    } catch(e) {}
-    return {
-        photos: JSON.parse(JSON.stringify(DEFAULT_PHOTOS)),
-        timeline: JSON.parse(JSON.stringify(DEFAULT_TIMELINE)),
-        letter: { ...DEFAULT_LETTER },
-        startDate: '2026-06-09T00:00:00'
-    };
-}
-
-function saveData() {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-        return true;
-    } catch(e) {
-        showToast('⚠️ Lưu thất bại — bộ nhớ đầy! Hãy xóa bớt ảnh.', 'error');
-        return false;
-    }
-}
-
-function genId() {
-    return 'id_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
-}
-
-/* ================================================
-   RENDER FUNCTIONS
-   ================================================ */
-let currentAlbumPage = 0;
-let currentModalIndex = 0;
-
-function renderAll() {
-    renderTimeline();
-    renderAlbum();
-    renderGallery();
-    renderLetter();
-}
-
-/* ---- TIMELINE ---- */
-function renderTimeline() {
-    const list = document.getElementById('timeline-list');
-    list.innerHTML = '';
-    appData.timeline.forEach((item, idx) => {
-        const el = document.createElement('div');
-        el.className = 'timeline-item reveal';
-        el.innerHTML = `
-            <div class="timeline-card">
-                <div class="timeline-item-controls">
-                    <button class="tl-ctrl-btn" title="Sửa" onclick="openTimelineModal('${item.id}')">✏️</button>
-                    <button class="tl-ctrl-btn delete" title="Xóa" onclick="confirmDelete('Xóa sự kiện \\"${item.event}\\"?', () => deleteTimeline('${item.id}'))">🗑️</button>
-                </div>
-                <span class="timeline-icon">${item.icon}</span>
-                <div class="timeline-date">${item.date}</div>
-                <div class="timeline-event">${item.event}</div>
-                <p class="timeline-desc">${item.desc}</p>
-            </div>
-            <div class="timeline-dot"></div>
-        `;
-        list.appendChild(el);
-    });
-    // Re-observe new elements
-    observeReveal();
-}
-
-/* ---- ALBUM ---- */
-function renderAlbum() {
-    const pagesEl = document.getElementById('album-pages');
-    const dotsEl = document.getElementById('album-dots');
-    const total = appData.photos.length;
-
-    pagesEl.innerHTML = '';
-    dotsEl.innerHTML = '';
-
-    if (total === 0) {
-        pagesEl.innerHTML = `<div class="album-page active" style="justify-content:center;align-items:center;opacity:1;transform:scale(1);">
-            <div style="text-align:center;color:var(--text-muted);">
-                <div style="font-size:3rem;margin-bottom:10px;">📷</div>
-                <div style="font-family:var(--font-display);font-style:italic;">Chưa có ảnh nào. Hãy thêm ảnh vào album!</div>
-            </div>
-        </div>`;
-        document.getElementById('album-counter').textContent = '0 / 0';
-        return;
-    }
-
-    // Clamp current page
-    if (currentAlbumPage >= total) currentAlbumPage = total - 1;
-    if (currentAlbumPage < 0) currentAlbumPage = 0;
-
-    appData.photos.forEach((photo, idx) => {
-        const page = document.createElement('div');
-        page.className = 'album-page' + (idx === currentAlbumPage ? ' active' : '');
-        page.dataset.page = idx;
-        page.innerHTML = `
-            <img class="album-page-img" src="${photo.src}" alt="Kỷ niệm ${idx+1}" loading="lazy">
-            <div class="album-page-caption">${photo.albumCaption}</div>
-            <div class="album-page-number">Trang ${idx+1} / ${total}</div>
-            <button class="album-caption-edit-btn" onclick="openEditCaption('${photo.id}', 'album')">✏️ Sửa caption</button>
-        `;
-        pagesEl.appendChild(page);
-
-        const dot = document.createElement('span');
-        dot.className = 'album-dot' + (idx === currentAlbumPage ? ' active' : '');
-        dot.onclick = () => albumGoTo(idx);
-        dotsEl.appendChild(dot);
-    });
-
-    updateAlbumUI();
-}
-
-function updateAlbumUI() {
-    const total = appData.photos.length;
-    document.getElementById('album-counter').textContent = total > 0 ? `${currentAlbumPage + 1} / ${total}` : '0 / 0';
-    document.getElementById('album-prev').disabled = currentAlbumPage === 0;
-    document.getElementById('album-next').disabled = currentAlbumPage >= total - 1;
-}
-
-function albumGoTo(idx) {
-    const pages = document.querySelectorAll('.album-page');
-    const dots = document.querySelectorAll('.album-dot');
-    if (pages[currentAlbumPage]) pages[currentAlbumPage].classList.remove('active');
-    if (dots[currentAlbumPage]) dots[currentAlbumPage].classList.remove('active');
-    currentAlbumPage = idx;
-    if (pages[currentAlbumPage]) pages[currentAlbumPage].classList.add('active');
-    if (dots[currentAlbumPage]) dots[currentAlbumPage].classList.add('active');
-    updateAlbumUI();
-}
-function albumNext() { if (currentAlbumPage < appData.photos.length - 1) albumGoTo(currentAlbumPage + 1); }
-function albumPrev() { if (currentAlbumPage > 0) albumGoTo(currentAlbumPage - 1); }
-
-// Swipe album
-let albumTouchX = 0;
-document.getElementById('album-book').addEventListener('touchstart', e => { albumTouchX = e.changedTouches[0].screenX; }, { passive: true });
-document.getElementById('album-book').addEventListener('touchend', e => {
-    const diff = albumTouchX - e.changedTouches[0].screenX;
-    if (Math.abs(diff) > 50) { if (diff > 0) albumNext(); else albumPrev(); }
-}, { passive: true });
-
-/* ---- GALLERY ---- */
-function renderGallery() {
-    const grid = document.getElementById('gallery-grid');
-    grid.innerHTML = '';
-
-    appData.photos.forEach((photo, idx) => {
-        const card = document.createElement('div');
-        card.className = 'gallery-card reveal';
-        card.innerHTML = `
-            <div class="photo-edit-controls">
-                <button class="photo-delete-btn" onclick="confirmDelete('Xóa ảnh này?', () => deletePhoto('${photo.id}'))">✕</button>
-                <button class="photo-caption-btn" onclick="openEditCaption('${photo.id}', 'gallery')">✏️ Caption</button>
-            </div>
-            <img src="${photo.src}" alt="Kỷ niệm ${idx+1}" loading="lazy">
-            <span class="gallery-card-label">${String(idx+1).padStart(2,'0')}</span>
-        `;
-        if (!editMode) card.addEventListener('click', () => openModal(idx));
-        grid.appendChild(card);
-    });
-
-    // Add photo card (only in edit mode)
-    if (editMode) {
-        const addCard = document.createElement('div');
-        addCard.className = 'add-photo-card';
-        addCard.innerHTML = `
-            <div class="add-photo-content">
-                <span class="add-icon">➕</span>
-                <span>Thêm ảnh</span>
-            </div>
-        `;
-        addCard.onclick = () => openAdminModal('modal-add-photo');
-        grid.appendChild(addCard);
-    }
-
-    observeReveal();
-}
-
-/* ---- LETTER ---- */
-function renderLetter() {
-    const l = appData.letter;
-    document.getElementById('letter-greeting').textContent = l.greeting;
-    // Convert newlines to <br>
-    document.getElementById('letter-body').innerHTML = l.body.replace(/\n/g, '<br>');
-    document.getElementById('letter-signature').innerHTML = l.signature.replace(/\n/g, '<br>');
-}
-
-/* ================================================
-   EDIT MODE
-   ================================================ */
-let editMode = false;
-
-function toggleEditMode() {
-    editMode = !editMode;
-    const fab = document.getElementById('edit-fab');
-    if (editMode) {
-        document.body.classList.add('edit-mode');
-        fab.textContent = '✓ Xong chỉnh sửa';
-        fab.classList.add('active');
-        showToast('✏️ Chế độ chỉnh sửa đang bật', 'success');
-    } else {
-        document.body.classList.remove('edit-mode');
-        fab.textContent = '✏️ Chỉnh sửa';
-        fab.classList.remove('active');
-        showToast('✅ Đã lưu tất cả thay đổi', 'success');
-    }
-    // Re-render gallery to show/hide add card and controls
-    renderGallery();
-}
-
-/* ================================================
-   PHOTO CRUD
-   ================================================ */
-let pendingPhotos = []; // { dataUrl, caption }
-
-function handleFileSelect(files) {
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
-        compressImage(file).then(dataUrl => {
-            pendingPhotos.push({ dataUrl, caption: '' });
-            renderPreviewGrid();
-        });
-    });
-}
-
-async function compressImage(file, maxDim = 1200, quality = 0.72) {
-    return new Promise(resolve => {
-        const reader = new FileReader();
-        reader.onload = e => {
-            const img = new Image();
-            img.onload = () => {
-                let w = img.width, h = img.height;
-                if (w > maxDim || h > maxDim) {
-                    if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
-                    else { w = Math.round(w * maxDim / h); h = maxDim; }
-                }
-                const canvas = document.createElement('canvas');
-                canvas.width = w; canvas.height = h;
-                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                resolve(canvas.toDataURL('image/jpeg', quality));
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-    });
-}
-
-function renderPreviewGrid() {
-    const grid = document.getElementById('preview-grid');
-    grid.innerHTML = '';
-    pendingPhotos.forEach((p, idx) => {
-        const item = document.createElement('div');
-        item.innerHTML = `
-            <div class="preview-item">
-                <img src="${p.dataUrl}" alt="Preview ${idx+1}">
-                <button class="preview-remove" onclick="removePending(${idx})">✕</button>
-            </div>
-            <div class="preview-caption-wrap">
-                <input class="preview-caption-input" placeholder="Caption..." value="${p.caption}"
-                    oninput="pendingPhotos[${idx}].caption = this.value">
-            </div>
-        `;
-        grid.appendChild(item);
-    });
-}
-
-function removePending(idx) {
-    pendingPhotos.splice(idx, 1);
-    renderPreviewGrid();
-}
-
-function confirmAddPhotos() {
-    if (pendingPhotos.length === 0) { showToast('Chưa chọn ảnh nào!', 'error'); return; }
-    pendingPhotos.forEach(p => {
-        appData.photos.push({
-            id: genId(),
-            src: p.dataUrl,
-            albumCaption: p.caption || 'Kỷ niệm của chúng mình 💕',
-            isDefault: false
-        });
-    });
-    if (saveData()) {
-        showToast(`✅ Đã thêm ${pendingPhotos.length} ảnh!`, 'success');
-        pendingPhotos = [];
-        document.getElementById('preview-grid').innerHTML = '';
-        document.getElementById('file-input').value = '';
-        closeAdminModal('modal-add-photo');
-        renderGallery();
-        renderAlbum();
-    }
-}
-
-function deletePhoto(id) {
-    const idx = appData.photos.findIndex(p => p.id === id);
-    if (idx === -1) return;
-    appData.photos.splice(idx, 1);
-    if (saveData()) {
-        showToast('🗑️ Đã xóa ảnh', 'success');
-        // Adjust album page
-        if (currentAlbumPage >= appData.photos.length) currentAlbumPage = Math.max(0, appData.photos.length - 1);
-        renderGallery();
-        renderAlbum();
-    }
-}
-
-/* ---- Edit Caption ---- */
-let editCaptionTarget = 'album'; // 'album' or 'gallery' (same effect now)
-
-function openEditCaption(id, target) {
-    editCaptionTarget = target;
-    const photo = appData.photos.find(p => p.id === id);
-    if (!photo) return;
-    document.getElementById('edit-caption-id').value = id;
-    document.getElementById('edit-caption-text').value = photo.albumCaption;
-    openAdminModal('modal-edit-caption');
-}
-
-function saveCaption() {
-    const id = document.getElementById('edit-caption-id').value;
-    const text = document.getElementById('edit-caption-text').value.trim();
-    if (!text) { showToast('Caption không được để trống!', 'error'); return; }
-    const photo = appData.photos.find(p => p.id === id);
-    if (!photo) return;
-    photo.albumCaption = text;
-    if (saveData()) {
-        showToast('✅ Đã lưu caption', 'success');
-        closeAdminModal('modal-edit-caption');
-        renderAlbum();
-    }
-}
-
-/* ================================================
-   TIMELINE CRUD
-   ================================================ */
-let selectedIcon = '💖';
-
-function openTimelineModal(id) {
-    const modal = document.getElementById('modal-timeline');
-    const isEdit = !!id;
-    document.getElementById('timeline-modal-title').textContent = isEdit ? '✏️ Sửa sự kiện' : '📅 Thêm sự kiện';
-    document.getElementById('timeline-edit-id').value = id || '';
-
-    if (isEdit) {
-        const item = appData.timeline.find(t => t.id === id);
-        if (!item) return;
-        document.getElementById('tl-date').value = item.date;
-        document.getElementById('tl-event').value = item.event;
-        document.getElementById('tl-desc').value = item.desc;
-        selectIcon(item.icon);
-    } else {
-        document.getElementById('tl-date').value = '';
-        document.getElementById('tl-event').value = '';
-        document.getElementById('tl-desc').value = '';
-        selectIcon('💖');
-    }
-    openAdminModal('modal-timeline');
-}
-
-function selectIcon(icon) {
-    selectedIcon = icon;
-    document.querySelectorAll('.icon-opt').forEach(el => {
-        el.classList.toggle('selected', el.dataset.icon === icon);
-    });
-}
-
-document.getElementById('icon-picker').addEventListener('click', e => {
-    const opt = e.target.closest('.icon-opt');
-    if (opt) selectIcon(opt.dataset.icon);
-});
-
-function saveTimelineItem() {
-    const id = document.getElementById('timeline-edit-id').value;
-    const date = document.getElementById('tl-date').value.trim();
-    const event = document.getElementById('tl-event').value.trim();
-    const desc = document.getElementById('tl-desc').value.trim();
-
-    if (!date || !event) { showToast('Vui lòng điền ngày và tên sự kiện!', 'error'); return; }
-
-    if (id) {
-        // Edit
-        const item = appData.timeline.find(t => t.id === id);
-        if (!item) return;
-        item.icon = selectedIcon;
-        item.date = date;
-        item.event = event;
-        item.desc = desc;
-    } else {
-        // Add
-        appData.timeline.push({ id: genId(), icon: selectedIcon, date, event, desc });
-    }
-
-    if (saveData()) {
-        showToast(id ? '✅ Đã cập nhật sự kiện' : '✅ Đã thêm sự kiện!', 'success');
-        closeAdminModal('modal-timeline');
-        renderTimeline();
-    }
-}
-
-function deleteTimeline(id) {
-    const idx = appData.timeline.findIndex(t => t.id === id);
-    if (idx === -1) return;
-    appData.timeline.splice(idx, 1);
-    if (saveData()) {
-        showToast('🗑️ Đã xóa sự kiện', 'success');
-        renderTimeline();
-    }
-}
-
-/* ================================================
-   LETTER CRUD
-   ================================================ */
-function openLetterModal() {
-    document.getElementById('letter-greeting-input').value = appData.letter.greeting;
-    document.getElementById('letter-body-input').value = appData.letter.body;
-    document.getElementById('letter-sig-input').value = appData.letter.signature;
-    openAdminModal('modal-letter');
-}
-
-function saveLetter() {
-    const greeting = document.getElementById('letter-greeting-input').value.trim();
-    const body = document.getElementById('letter-body-input').value.trim();
-    const sig = document.getElementById('letter-sig-input').value.trim();
-    if (!greeting || !body) { showToast('Vui lòng điền đầy đủ!', 'error'); return; }
-    appData.letter = { greeting, body, signature: sig };
-    if (saveData()) {
-        showToast('✅ Đã lưu lời muốn nói', 'success');
-        closeAdminModal('modal-letter');
-        renderLetter();
-    }
-}
-
-/* ================================================
-   CONFIRM DELETE
-   ================================================ */
-function confirmDelete(msg, onConfirm) {
-    document.getElementById('confirm-msg').textContent = msg;
-    const btn = document.getElementById('confirm-yes-btn');
-    btn.onclick = () => { closeAdminModal('modal-confirm'); onConfirm(); };
-    openAdminModal('modal-confirm');
-}
-
-/* ================================================
-   MODAL HELPERS
-   ================================================ */
-function openAdminModal(id) {
-    document.getElementById(id).classList.add('show');
-}
-function closeAdminModal(id) {
-    document.getElementById(id).classList.remove('show');
-    if (id === 'modal-add-photo') {
-        pendingPhotos = [];
-        document.getElementById('preview-grid').innerHTML = '';
-        document.getElementById('file-input').value = '';
-    }
-}
-
-// Close on overlay click
-document.querySelectorAll('.admin-modal-overlay').forEach(overlay => {
-    overlay.addEventListener('click', e => {
-        if (e.target === overlay) closeAdminModal(overlay.id);
-    });
-});
-
-// Drag & Drop
-const dropZone = document.getElementById('drop-zone');
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-    handleFileSelect(e.dataTransfer.files);
-});
-
-/* ================================================
-   LIGHTBOX MODAL
-   ================================================ */
-const modal = document.getElementById('imageModal');
-const modalImg = document.getElementById('modalImg');
-
-function openModal(index) {
-    if (editMode) return;
-    currentModalIndex = index;
-    modalImg.src = appData.photos[index].src;
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-function closeModal() {
-    modal.style.display = 'none';
-    modalImg.src = '';
-    document.body.style.overflow = '';
-}
-function modalNext(e) {
-    if (e) e.stopPropagation();
-    currentModalIndex = (currentModalIndex + 1) % appData.photos.length;
-    modalImg.src = appData.photos[currentModalIndex].src;
-}
-function modalPrev(e) {
-    if (e) e.stopPropagation();
-    currentModalIndex = (currentModalIndex - 1 + appData.photos.length) % appData.photos.length;
-    modalImg.src = appData.photos[currentModalIndex].src;
-}
-modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-
-// Keyboard
-document.addEventListener('keydown', e => {
-    if (modal.style.display === 'flex') {
-        if (e.key === 'Escape') closeModal();
-        if (e.key === 'ArrowRight') { e.preventDefault(); modalNext(e); }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); modalPrev(e); }
-    } else if (!editMode) {
-        if (e.key === 'ArrowRight') albumNext();
-        if (e.key === 'ArrowLeft') albumPrev();
-    }
-});
-
-// Modal swipe
-let modalTX = 0;
-modal.addEventListener('touchstart', e => { modalTX = e.changedTouches[0].screenX; }, { passive: true });
-modal.addEventListener('touchend', e => {
-    const diff = modalTX - e.changedTouches[0].screenX;
-    if (Math.abs(diff) > 50) { if (diff > 0) modalNext(e); else modalPrev(e); }
-}, { passive: true });
-
-/* ================================================
-   MUSIC PLAYER
-   ================================================ */
-let isMusicPlaying = false;
-const bgMusic = document.getElementById('bg-music');
-const musicToggle = document.getElementById('music-toggle');
-const musicInfo = document.getElementById('music-info');
-const musicBars = document.querySelectorAll('.music-bar');
-
-function setMusicPlaying(playing) {
-    isMusicPlaying = playing;
-    musicToggle.classList.toggle('playing', playing);
-    musicToggle.textContent = playing ? '🎵' : '🔇';
-    musicInfo.classList.toggle('show', playing);
-    musicBars.forEach(b => b.classList.toggle('paused', !playing));
-}
-function toggleMusic() {
-    if (isMusicPlaying) {
-        bgMusic.pause(); setMusicPlaying(false);
-    } else {
-        bgMusic.volume = 0.5;
-        bgMusic.play().then(() => setMusicPlaying(true)).catch(() => {});
-    }
-}
-bgMusic.addEventListener('pause', () => { if (!bgMusic.ended) setMusicPlaying(false); });
-bgMusic.addEventListener('play', () => setMusicPlaying(true));
-
-/* ================================================
-   LOVE COUNTER
-   ================================================ */
-const startDate = new Date(appData.startDate).getTime();
-function updateCounter() {
-    const diff = Date.now() - startDate;
-    if (diff < 0) { ['days','hours','minutes','seconds'].forEach(id => document.getElementById(id).textContent = '0'); return; }
-    const days = Math.floor(diff / 86400000);
-    const hours = Math.floor((diff % 86400000) / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    document.getElementById('days').textContent = days;
-    document.getElementById('hours').textContent = String(hours).padStart(2,'0');
-    document.getElementById('minutes').textContent = String(minutes).padStart(2,'0');
-    document.getElementById('seconds').textContent = String(seconds).padStart(2,'0');
-}
-setInterval(updateCounter, 1000);
-updateCounter();
-
-/* ================================================
-   SCROLL REVEAL
-   ================================================ */
-let scrollObserver;
-function observeReveal() {
-    if (scrollObserver) {
-        document.querySelectorAll('.reveal').forEach(el => scrollObserver.observe(el));
-        return;
-    }
-    scrollObserver = new IntersectionObserver(entries => {
-        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => scrollObserver.observe(el));
-}
-
-/* ================================================
-   PARTICLES
-   ================================================ */
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
-let particles = [];
-
-function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-class Particle {
-    constructor() { this.reset(); }
-    reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2.5 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = (Math.random() - 0.5) * 0.3;
-        this.opacity = Math.random() * 0.5 + 0.1;
-        this.fadeDir = Math.random() > 0.5 ? 1 : -1;
-        const colors = ['rgba(255,107,138,', 'rgba(240,194,127,', 'rgba(255,255,255,'];
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-    }
-    update() {
-        this.x += this.speedX; this.y += this.speedY;
-        this.opacity += this.fadeDir * 0.003;
-        if (this.opacity >= 0.6) this.fadeDir = -1;
-        if (this.opacity <= 0.05) this.fadeDir = 1;
-        if (this.x < -10 || this.x > canvas.width + 10 || this.y < -10 || this.y > canvas.height + 10) this.reset();
-    }
-    draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color + this.opacity + ')';
-        ctx.fill();
-    }
-}
-
-function initParticles() {
-    const count = Math.min(70, Math.floor((canvas.width * canvas.height) / 18000));
-    particles = Array.from({ length: count }, () => new Particle());
-}
-function animateParticles() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => { p.update(); p.draw(); });
-    for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx*dx + dy*dy);
-            if (dist < 110) {
-                ctx.beginPath();
-                ctx.moveTo(particles[i].x, particles[i].y);
-                ctx.lineTo(particles[j].x, particles[j].y);
-                ctx.strokeStyle = `rgba(255,143,163,${(1 - dist/110) * 0.07})`;
-                ctx.lineWidth = 0.5;
-                ctx.stroke();
-            }
-        }
-    }
-    requestAnimationFrame(animateParticles);
-}
-initParticles();
-animateParticles();
-
-/* ================================================
-   CLICK HEARTS
-   ================================================ */
-document.addEventListener('click', e => {
-    if (document.getElementById('welcome-screen').style.display !== 'none') return;
-    if (e.target.closest('.admin-modal-overlay') || e.target.closest('.music-floating') ||
-        e.target.closest('.edit-fab') || e.target.closest('.scroll-top-btn') ||
-        e.target.closest('.modal-overlay') || e.target.closest('.photo-edit-controls') ||
-        e.target.closest('.timeline-item-controls') || e.target.closest('.add-timeline-btn') ||
-        e.target.closest('.letter-edit-btn') || e.target.closest('.album-caption-edit-btn')) return;
-
-    const icons = ['❤️', '💕', '💖', '✨', '💗'];
-    const h = document.createElement('div');
-    h.className = 'click-heart';
-    h.textContent = icons[Math.floor(Math.random() * icons.length)];
-    h.style.left = e.clientX + 'px';
-    h.style.top = e.clientY + 'px';
-    document.body.appendChild(h);
-    setTimeout(() => h.remove(), 1200);
-});
-
-/* ================================================
-   SCROLL TO TOP
-   ================================================ */
-const scrollTopBtn = document.getElementById('scroll-top');
-window.addEventListener('scroll', () => {
-    scrollTopBtn.classList.toggle('show', window.scrollY > 500);
-}, { passive: true });
-
-/* ================================================
-   TOAST
-   ================================================ */
-function showToast(msg, type = 'success') {
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.textContent = msg;
-    container.appendChild(toast);
-    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(20px)'; toast.style.transition = 'all 0.4s'; setTimeout(() => toast.remove(), 400); }, 2500);
-}
-
-/* ================================================
-   START EXPERIENCE
-   ================================================ */
-function startExperience() {
-    const welcome = document.getElementById('welcome-screen');
-    welcome.style.opacity = '0';
-    setTimeout(() => {
-        welcome.style.display = 'none';
-        const main = document.getElementById('main-content');
-        main.style.display = 'block';
-        requestAnimationFrame(() => {
-            main.style.opacity = '1';
-            bgMusic.volume = 0.5;
-            bgMusic.play().then(() => setMusicPlaying(true)).catch(() => {});
-            document.getElementById('couple-video').play().catch(() => {});
-            observeReveal();
-        });
-    }, 1500);
-}
-
-/* ================================================
-   INIT
-   ================================================ */
-// Pre-initialize counter and particles even before start
-renderAll();
-
-// Keyboard shortcut: Ctrl+E toggles edit mode
-document.addEventListener('keydown', e => {
-    if (e.ctrlKey && e.key === 'e') { e.preventDefault(); toggleEditMode(); }
-});
-</script>
 </body>
 </html>
